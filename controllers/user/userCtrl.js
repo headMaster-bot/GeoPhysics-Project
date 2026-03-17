@@ -18,7 +18,7 @@ const userRegisterCtrl = async (req, res) => {
         if (emailExists) {
             return res.json({
                 status: "Failed",
-                message: "Email already existssss"
+                message: "Email already exists"
             })
         }
         // hash password
