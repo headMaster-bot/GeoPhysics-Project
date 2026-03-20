@@ -10,13 +10,13 @@ const getTokenFromHeader = require("../../utils/getTokenFromHeader");
 
 const userRegisterCtrl = async (req, res) => {
     // console.log(req.body, "Register");
-    const { fullName, email, password, organisation } = req.body
+    const { fullName, email, password, organisation, role } = req.body
     try {
         // Check if passwords match
 
         const emailExists = await User.findOne({ email })
         if (emailExists) {
-            return res.json({
+            return res.status(400).json({
                 status: "Failed",
                 message: "Email already exists"
             })
@@ -31,14 +31,27 @@ const userRegisterCtrl = async (req, res) => {
             email,
             password: hashedPassword,
             organisation,
-        })
+            role: role || 'user', // default to 'user' if not provided
+        });
+        console.log(createUser, "Geophysics");
+        
 
-        return res.json({
+        return res.status(201).json({
             status: "success",
-            message: createUser,
+            message: "User registered successfully",
+            user: {
+                id: createUser._id,
+                fullName: createUser.fullName,
+                email: createUser.email,
+                organisation: createUser.organisation,
+                role: createUser.role
+            }
         })
     } catch (error) {
-        res.json(error.message)
+        res.status(500).json({
+            status: "error",
+            message: error.message
+        })
     }
 }
 
