@@ -25,6 +25,10 @@ const userSchema = new mongoose.Schema({
         // required: true,
         default: null
     },
+    totalProjects: {
+        type: Number,
+        default: 0
+    },
 
     isAdmin: {
         type: Boolean,

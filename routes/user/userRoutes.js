@@ -10,6 +10,6 @@ userRouter.post("/login", userLoginCtrl)
 // get all users
 userRouter.get("/", usersCtrl)
 // get user profile
-userRouter.get("/profile/:id", isLogIn, userProfileCtrl)
+userRouter.get("/profile", isLogIn, userProfileCtrl)
 
 module.exports = userRouter;

@@ -33,19 +33,13 @@ const userRegisterCtrl = async (req, res) => {
             organisation,
             role: role || 'user', // default to 'user' if not provided
         });
-        console.log(createUser, "Geophysics");
+        // console.log(createUser, "Geophysics");
         
 
         return res.status(201).json({
             status: "success",
             message: "User registered successfully",
-            user: {
-                id: createUser._id,
-                fullName: createUser.fullName,
-                email: createUser.email,
-                organisation: createUser.organisation,
-                role: createUser.role
-            }
+            user: createUser
         })
     } catch (error) {
         res.status(500).json({
@@ -63,16 +57,16 @@ const userLoginCtrl = async (req, res) => {
     try {
         const userFound = await User.findOne({ email })
         if (!userFound) {
-            return res.json({
-                status: "Failed",
+            return res.status(400).json({
                 message: "Invalid login credentials"
             })
         }
         // Check if the password matches
         const isPasswordMatch = await bcrypt.compare(password, userFound.password);
+        // console.log(userFound, "login");
+        
         if (!isPasswordMatch) {
-            return res.json({
-                status: "Failed",
+            return res.status(400).json({
                 message: "Invalid login credentials"
             })
         }
@@ -86,7 +80,7 @@ const userLoginCtrl = async (req, res) => {
             }
         })
     } catch (error) {
-        res.json({
+        res.status(500).json({
             message: error.message
         })
     }
@@ -117,7 +111,7 @@ const userProfileCtrl = async (req, res) => {
 
     try {
         const user = await User.findById(req.userAuth)
-        // console.log(user);
+        console.log(user);
         // const token = getTokenFromHeader(req);
         // console.log(token, "123");
         res.json({

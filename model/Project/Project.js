@@ -8,13 +8,16 @@ const projectSchema = new mongoose.Schema({
     },
     description: {
         type: String,
+        required: [true, 'project description is required'],
         trim: true,
     },
     startDate: {
         type: Date,
+        required: true,
     },
     endDate: {
         type: Date,
+        required: true,
     },
     sprintDuration: {
         type: Number,
