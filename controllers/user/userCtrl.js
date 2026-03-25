@@ -111,7 +111,7 @@ const userProfileCtrl = async (req, res) => {
 
     try {
         const user = await User.findById(req.userAuth).populate("survey")
-        console.log(user);
+        // console.log(user);
         // const token = getTokenFromHeader(req);
         // console.log(token, "123");
         res.json({

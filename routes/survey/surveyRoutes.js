@@ -5,7 +5,6 @@ const {
     getSurveyCtrl,
     updateSurveyCtrl,
     deleteSurveyCtrl,
-    updateSurveyLocationCtrl
 } = require('../../controllers/survey/surveyCtrl');
 const isLogIn = require('../../middlewares/isLogIn');
 
@@ -15,15 +14,13 @@ const surveyRouter = express.Router();
 surveyRouter.post("/create-survey", isLogIn, createSurveyCtrl);
 
 // Get all surveys for the logged-in user
-surveyRouter.get("/", isLogIn, getUserSurveysCtrl);
+surveyRouter.get("/all-surveys", getUserSurveysCtrl);
 
 // Get a single survey
 surveyRouter.get("/:id", isLogIn, getSurveyCtrl);
 
-surveyRouter.put("/survey-location", isLogIn, updateSurveyLocationCtrl);
-
 // Update a survey
-surveyRouter.put("/:id", isLogIn, updateSurveyCtrl);
+surveyRouter.put("/update/:id", isLogIn, updateSurveyCtrl);
 
 // Delete a survey
 surveyRouter.delete("/:id", isLogIn, deleteSurveyCtrl);

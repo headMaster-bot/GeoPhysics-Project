@@ -12,8 +12,6 @@ const createSurveyCtrl = async (req, res) => {
         clientName,
         clientEmail,
         targetCompletionDate,
-        latitude,
-        longitude,
     } = req.body;
 
     try {
@@ -41,8 +39,6 @@ const createSurveyCtrl = async (req, res) => {
             clientName,
             clientEmail,
             targetCompletionDate,
-            latitude,
-            longitude,
             user: userFound._id
         });
 
@@ -68,8 +64,9 @@ const createSurveyCtrl = async (req, res) => {
 // @access  Private
 const getUserSurveysCtrl = async (req, res) => {
     try {
-        const userId = req.userAuth;
-        const surveys = await Survey.find({ user: userId }).sort({ createdAt: -1 });
+        // const userId = req.userAuth;
+        const surveys = await Survey.find()
+        // const surveys = await Survey.find({ user: userId }).sort({ createdAt: -1 });
 
         res.json({
             status: "success",
@@ -116,47 +113,14 @@ const getSurveyCtrl = async (req, res) => {
         });
     }
 };
-// @desc update survey location 
-// @route PUT/api/v1/surveys/survey-location
-// @access Private
-const updateSurveyLocationCtrl = async (req, res) => {
-    const { latitude, longitude } = req.body;
-
-    try {
-        const survey = await Survey.findByIdAndUpdate(
-            req.userAuth,
-            {
-                location: {
-                    lat: latitude,
-                    lng: longitude
-                }
-            },
-            { returnDocument: "after" }
-        );
-
-        if (!survey) {
-            return res.status(404).json({
-                status: "error",
-                message: "Survey not found"
-            });
-        }
-
-        res.json({
-            status: "success",
-            data: survey
-        });
-
-    } catch (error) {
-        res.status(500).json({
-            message: error.message
-        });
-    }
-};
 
 // @desc    Update a survey
 // @route   PUT /api/v1/surveys/:id
 // @access  Private
 const updateSurveyCtrl = async (req, res) => {
+    const { latitude, longitude, vegetationDensity, ambientNoise, targetDepthRange,
+        layoutPattern, stationSpacing, lineSpacing, 
+    } = req.body
     try {
         const survey = await Survey.findById(req.params.id);
 
@@ -175,11 +139,31 @@ const updateSurveyCtrl = async (req, res) => {
             });
         }
 
-        const updatedSurvey = await Survey.findByIdAndUpdate(
-            req.params.id,
-            req.body,
-            { new: true, runValidators: true }
+        const updatedSurvey = await Survey.findByIdAndUpdate(req.params.id,
+            {
+                latitude,
+                longitude,
+                vegetationDensity,
+                ambientNoise,
+                targetDepthRange,
+                layoutPattern,
+                stationSpacing,
+                lineSpacing,
+                // length, 
+                // breadth
+            },
+            {
+                new: true,
+                runValidators: true
+            }
         );
+
+        if (!updatedSurvey) {
+            return res.status(404).json({
+                status: "error",
+                message: "Survey not found or update failed"
+            });
+        }
 
         res.json({
             status: "success",
@@ -241,5 +225,4 @@ module.exports = {
     getSurveyCtrl,
     updateSurveyCtrl,
     deleteSurveyCtrl,
-    updateSurveyLocationCtrl,
 };

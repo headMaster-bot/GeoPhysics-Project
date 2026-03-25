@@ -46,6 +46,16 @@ const surveySchema = new mongoose.Schema({
         type: Number,
         default: 0,
     },
+    layoutPattern:{
+        type: String,
+        enum: ['grid', 'linear', 'random'],
+    },
+    stationSpacing:{
+        type: Number,
+    },
+    lineSpacing:{
+        type: Number,
+    },
     // Client Information
     clientName: {
         type: String,
