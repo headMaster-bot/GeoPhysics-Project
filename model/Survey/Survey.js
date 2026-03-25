@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const surveySchema = new mongoose.Schema({
    surveyName: {
     type: String,
-    required: [true, 'Survey name is required'], // ✅ correct message
+    // required: [true, 'Survey name is required'], // ✅ correct message
     trim: true,
 },
     description: {
@@ -12,40 +12,40 @@ const surveySchema = new mongoose.Schema({
     },
     surveyObjective: {
         type: String,
-        required: [true, 'Survey objective is required'],
+        // required: [true, 'Survey objective is required'],
         enum: ['Environmental Assessment', 'Resource Exploration', 'Engineering Investigation', 'Archaeological Survey'],
     },
     // Survey Area
-    // latitude: {
-    //     type: String,
-    //     required: [true, 'Latitude is required'],
-    // },
-    // longitude: {
-    //     type: String,
-    //     required: [true, 'Longitude is required'],
-    // },
-    // // Site Characterisation
-    // vegetationDensity: {
-    //     type: String,
-    //     enum: ['Low', 'Medium', 'High'],
-    // },
-    // ambientNoise: {
-    //     type: String,
-    //     enum: ['Low', 'Medium', 'High'],
-    // },
-    // targetDepthRange: {
-    //     type: String,
-    //     enum: ['0-5m', '5-10m', '10-20m', '20-50m', '50m+'],
-    // },
+    latitude: {
+        type: String,
+        required: false,
+    },
+    longitude: {
+        type: String,
+        required: false,
+    },
+    // Site Characterisation
+    vegetationDensity: {
+        type: String,
+        enum: ['Low', 'Medium', 'High'],
+    },
+    ambientNoise: {
+        type: String,
+        enum: ['Low', 'Medium', 'High'],
+    },
+    targetDepthRange: {
+        type: String,
+        enum: ['0-5m', '5-10m', '10-20m', '20-50m', '50m+'],
+    },
     // GIS Data
-    // length: {
-    //     type: Number,
-    //     default: 0,
-    // },
-    // breadth: {
-    //     type: Number,
-    //     default: 0,
-    // },
+    length: {
+        type: Number,
+        default: 0,
+    },
+    breadth: {
+        type: Number,
+        default: 0,
+    },
     // Client Information
     clientName: {
         type: String,

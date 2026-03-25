@@ -11,11 +11,20 @@ const createSurveyCtrl = async (req, res) => {
         surveyObjective,
         clientName,
         clientEmail,
-        targetCompletionDate
+        targetCompletionDate,
+        latitude,
+        longitude,
     } = req.body;
 
     try {
-        console.log(req.body); // ✅ debug
+        // console.log(req.body); 
+        const surveyExits = await Survey.findOne({ surveyName })
+        if (surveyExits) {
+            res.json({
+                status: "failed",
+                message: "Survey already exist"
+            })
+        }
 
         const userFound = await User.findById(req.userAuth);
 
@@ -25,14 +34,6 @@ const createSurveyCtrl = async (req, res) => {
                 message: "User not found",
             });
         }
-
-        // if (!surveyName) {
-        //     return res.status(400).json({
-        //         status: "error",
-        //         message: "surveyName is required",
-        //     });
-        // }
-
         const surveyCreated = await Survey.create({
             surveyName,
             description,
@@ -40,6 +41,8 @@ const createSurveyCtrl = async (req, res) => {
             clientName,
             clientEmail,
             targetCompletionDate,
+            latitude,
+            longitude,
             user: userFound._id
         });
 
@@ -109,6 +112,42 @@ const getSurveyCtrl = async (req, res) => {
     } catch (error) {
         res.status(500).json({
             status: "error",
+            message: error.message
+        });
+    }
+};
+// @desc update survey location 
+// @route PUT/api/v1/surveys/survey-location
+// @access Private
+const updateSurveyLocationCtrl = async (req, res) => {
+    const { latitude, longitude } = req.body;
+
+    try {
+        const survey = await Survey.findByIdAndUpdate(
+            req.userAuth,
+            {
+                location: {
+                    lat: latitude,
+                    lng: longitude
+                }
+            },
+            { returnDocument: "after" }
+        );
+
+        if (!survey) {
+            return res.status(404).json({
+                status: "error",
+                message: "Survey not found"
+            });
+        }
+
+        res.json({
+            status: "success",
+            data: survey
+        });
+
+    } catch (error) {
+        res.status(500).json({
             message: error.message
         });
     }
@@ -202,4 +241,5 @@ module.exports = {
     getSurveyCtrl,
     updateSurveyCtrl,
     deleteSurveyCtrl,
+    updateSurveyLocationCtrl,
 };

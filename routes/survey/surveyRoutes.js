@@ -4,7 +4,8 @@ const {
     getUserSurveysCtrl,
     getSurveyCtrl,
     updateSurveyCtrl,
-    deleteSurveyCtrl
+    deleteSurveyCtrl,
+    updateSurveyLocationCtrl
 } = require('../../controllers/survey/surveyCtrl');
 const isLogIn = require('../../middlewares/isLogIn');
 
@@ -18,6 +19,8 @@ surveyRouter.get("/", isLogIn, getUserSurveysCtrl);
 
 // Get a single survey
 surveyRouter.get("/:id", isLogIn, getSurveyCtrl);
+
+surveyRouter.put("/survey-location", isLogIn, updateSurveyLocationCtrl);
 
 // Update a survey
 surveyRouter.put("/:id", isLogIn, updateSurveyCtrl);
