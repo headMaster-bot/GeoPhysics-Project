@@ -41,8 +41,9 @@ const createProjectCtrl = async (req, res) => {
 
         res.status(201).json({
             status: "Success",
+            message: "Project created successfully",
             data: project,
-            totalProjects: updatedUser.totalProjects, // ✅ from DB
+            totalProjects: updatedUser.totalProjects,
         });
 
     } catch (error) {
@@ -56,16 +57,17 @@ const getProjectsCtrl = async (req, res) => {
     // console.log(req.userAuth, "user");
 
     try {
-        const userFound = await User.findById(req.userAuth);
-        if (!userFound) {
-            res.json({
-                status: "Failed",
-                data: "User not found"
-            })
-        }
+        // const userFound = await User.findById(req.userAuth);
+        // if (!userFound) {
+        //     res.json({
+        //         status: "Failed",
+        //         data: "User not found"
+        //     })
+        // }
         const projects = await Project.find()
         res.json({
             status: "Success",
+            message: projects,
             data: projects,
         })
     } catch (error) {
@@ -113,12 +115,16 @@ const updateProjectCtrl = async (req, res) => {
             );
             return res.json({
                 status: "Success",
+                message: "Project updated successfully",
                 data: updateProject,
             })
         }
     }
     catch (error) {
-        res.status(500).json({ message: error.message });
+        res.status(500).json({ 
+            status: "Failed",
+            message: error.message 
+        });
     }
 };
 
