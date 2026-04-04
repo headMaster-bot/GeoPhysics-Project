@@ -29,7 +29,7 @@ const createEpicCtrl = async (req, res) => {
 const getAllEpicsCtrl = async (req, res) => {
     try {
         const epics = await Epic.find();
-        res.json({
+        return res.json({
             status: "Success",
             message: epics,
         })

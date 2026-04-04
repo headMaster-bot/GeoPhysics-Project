@@ -8,6 +8,26 @@ const storySchema = new mongoose.Schema({
     description: {
         type: String,
     },
+    epic: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Epic',
+        required: true,
+    },
+    user: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        required: true, 
+    },
+    priority: {
+        type: String,
+    },
+    points: {
+        type: Number,
+    },
+    assigned: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+    }
 });
 
 // compile 

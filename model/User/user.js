@@ -50,8 +50,23 @@ const userSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Project',
     }],
-}, {
-    timestamps: true,
+},
+    {
+        timestamps: true,
+        toJSON: { virtuals: true }
+    }
+);
+
+// ✅ Virtual for initials
+userSchema.virtual("initials").get(function () {
+  if (!this.fullName) return "";
+
+  const names = this.fullName.trim().split(" ");
+
+  const firstInitial = names[0]?.charAt(0).toUpperCase() || "";
+  const lastInitial = names.length > 1 ? names[names.length - 1].charAt(0).toUpperCase() : "";
+
+  return `${firstInitial}${lastInitial}`; // or `${firstInitial} ${lastInitial}`
 });
 
 const User = mongoose.model('User', userSchema);
