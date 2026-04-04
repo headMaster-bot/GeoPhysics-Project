@@ -3,7 +3,8 @@ const dotenv = require('dotenv');
 const userRouter = require('./routes/user/userRoutes');
 const projectRouter = require('./routes/project/projectRoutes');
 const surveyRouter = require('./routes/survey/surveyRoutes');
-const cors = require("cors")
+const cors = require("cors");
+const epicRoutes = require('./routes/epic/epicRoutes');
 dotenv.config();
 
 const app = express();
@@ -17,6 +18,7 @@ app.use(cors())
 app.use("/api/v1/users", userRouter);
 app.use("/api/v1/projects", projectRouter);
 app.use("/api/v1/surveys", surveyRouter);
+app.use("/api/v1/epics", epicRoutes);
 
 const PORT = process.env.PORT || 7000;
 
