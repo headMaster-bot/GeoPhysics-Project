@@ -25,6 +25,11 @@ const userSchema = new mongoose.Schema({
         // required: true,
         default: null
     },
+    jobTitle: {
+        type: String,
+        // required: true,
+        default: null
+    },
     totalProjects: {
         type: Number,
         default: 0
@@ -59,14 +64,14 @@ const userSchema = new mongoose.Schema({
 
 // ✅ Virtual for initials
 userSchema.virtual("initials").get(function () {
-  if (!this.fullName) return "";
+    if (!this.fullName) return "";
 
-  const names = this.fullName.trim().split(" ");
+    const names = this.fullName.trim().split(" ");
 
-  const firstInitial = names[0]?.charAt(0).toUpperCase() || "";
-  const lastInitial = names.length > 1 ? names[names.length - 1].charAt(0).toUpperCase() : "";
+    const firstInitial = names[0]?.charAt(0).toUpperCase() || "";
+    const lastInitial = names.length > 1 ? names[names.length - 1].charAt(0).toUpperCase() : "";
 
-  return `${firstInitial}${lastInitial}`; // or `${firstInitial} ${lastInitial}`
+    return `${firstInitial}${lastInitial}`; // or `${firstInitial} ${lastInitial}`
 });
 
 const User = mongoose.model('User', userSchema);

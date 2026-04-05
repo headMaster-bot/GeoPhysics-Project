@@ -28,7 +28,11 @@ const storySchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
     }
-});
+},
+    {
+        timestamps: true,
+    }
+);
 
 // compile 
 const Story = mongoose.model("Story", storySchema);

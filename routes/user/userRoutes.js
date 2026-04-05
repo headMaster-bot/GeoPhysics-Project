@@ -1,5 +1,8 @@
 const express = require('express');
-const { userRegisterCtrl, userLoginCtrl, usersCtrl, userProfileCtrl } = require('../../controllers/user/userCtrl');
+const {
+    userRegisterCtrl, userLoginCtrl,
+    usersCtrl, userProfileCtrl, updateUserProfileCtrl
+} = require('../../controllers/user/userCtrl');
 const isLogIn = require('../../middlewares/isLogIn');
 const userRouter = express.Router()
 
@@ -11,5 +14,7 @@ userRouter.post("/login", userLoginCtrl)
 userRouter.get("/", usersCtrl)
 // get user profile
 userRouter.get("/profile", isLogIn, userProfileCtrl)
+// update user profile
+userRouter.put("/update/profile/:id", isLogIn, updateUserProfileCtrl)
 
 module.exports = userRouter;

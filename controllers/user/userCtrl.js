@@ -34,7 +34,7 @@ const userRegisterCtrl = async (req, res) => {
             role: role || 'user', // default to 'user' if not provided
         });
         // console.log(createUser, "Geophysics");
-        
+
 
         return res.status(201).json({
             status: "success",
@@ -64,7 +64,7 @@ const userLoginCtrl = async (req, res) => {
         // Check if the password matches
         const isPasswordMatch = await bcrypt.compare(password, userFound.password);
         // console.log(userFound, "login");
-        
+
         if (!isPasswordMatch) {
             return res.status(400).json({
                 message: "Invalid login credentials"
@@ -73,6 +73,7 @@ const userLoginCtrl = async (req, res) => {
         res.json({
             status: "success",
             message: {
+                id: userFound._id,
                 firstName: userFound.fullName,
                 isAdmin: userFound.isAdmin,
                 email: userFound.email,
@@ -117,11 +118,58 @@ const userProfileCtrl = async (req, res) => {
         res.json({
             status: "success",
             message: user,
-        })
+        },
+            {
+                new: true,
+            }
+        )
     } catch (error) {
         res.json({
             message: error.message
         })
+    }
+}
+
+// update user profile controller
+// @desc    update user profile controller
+// @route   PUT /api/v1/users/profile/:id
+const updateUserProfileCtrl = async (req, res) => {
+    const { fullName, email, jobTitle, organisation } = req.body;
+    try {
+        const user = await User.findById(req.userAuth);
+        if (!user) {
+            return res.status(404).json({
+                status: "Failed",
+                message: "User not found",
+            });
+        }
+        const updatedUser = await User.findByIdAndUpdate(
+            req.params.id,
+            {
+                fullName,
+                email,
+                jobTitle,
+                organisation
+            },
+            { new: true }
+        );
+        
+        if (!updatedUser) {
+            return res.status(404).json({
+                status: "Failed",
+                message: "Failed to update user",
+            });
+        }
+        
+        res.json({
+            status: "Success",
+            message: updatedUser,
+        })
+    } catch (error) {
+        res.status(500).json({
+            status: "Failed",
+            message: error.message
+        });
     }
 }
 
@@ -131,4 +179,5 @@ module.exports = {
     userLoginCtrl,
     usersCtrl,
     userProfileCtrl,
+    updateUserProfileCtrl,
 }
