@@ -11,6 +11,11 @@ const epicShema = new mongoose.Schema({
     priority: {
         type: String,
     },
+    project: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Project',
+        required: true,
+    },
     user: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
