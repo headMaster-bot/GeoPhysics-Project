@@ -74,6 +74,18 @@ userSchema.virtual("initials").get(function () {
     return `${firstInitial}${lastInitial}`; // or `${firstInitial} ${lastInitial}`
 });
 
+// ✅ Virtual for project count
+userSchema.virtual("projectCount").get(function () {
+    return this.projects ? this.projects.length : 0;
+})
+
+// ✅ Virtual for isActive
+userSchema.virtual("isActive").get(function () {
+    // A user is considered active if they have at least one project
+    return this.projectCount > 0;
+})
+
+
 const User = mongoose.model('User', userSchema);
 
 module.exports = User;

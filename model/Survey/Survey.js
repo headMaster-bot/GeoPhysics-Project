@@ -13,7 +13,7 @@ const surveySchema = new mongoose.Schema({
     surveyObjective: {
         type: String,
         // required: [true, 'Survey objective is required'],
-        enum: ['Environmental Assessment', 'Resource Exploration', 'Engineering Investigation', 'Archaeological Survey'],
+        enum: ['Environmental Assessment', 'Ground Water Exploration', 'Engineering Investigation', 'Archaeological Survey'],
     },
     // Survey Area
     latitude: {
@@ -33,10 +33,10 @@ const surveySchema = new mongoose.Schema({
         type: String,
         enum: ['Low', 'Medium', 'High'],
     },
-    targetDepthRange: {
-        type: String,
-        enum: ['0-5m', '5-10m', '10-20m', '20-50m', '50m+'],
-    },
+    // targetDepthRange: {
+    //     type: String,
+    //     // enum: ['0-5m', '5-10m', '10-20m', '20-50m', '50m+'],
+    // },
     // GIS Data
     length: {
         type: Number,
@@ -69,6 +69,16 @@ const surveySchema = new mongoose.Schema({
     },
     targetCompletionDate: {
         type: Date,
+    },
+    miniDepth: {
+        type: Number,
+    },
+    maxDepth: {
+        type: Number,
+    },
+    geologicalSettings: {
+        type: String,
+        enum: ['Nigerian Sedimentary Basin', 'Nigerian Basement Complex'],
     },
     // References
     user: {

@@ -90,43 +90,165 @@ const getProjectCtrl = async (req, res) => {
 };
 
 const updateProjectCtrl = async (req, res) => {
-    const { projectName } = req.body
-    try {
-        const projectExists = await Project.findOne({ projectName })
-        if (projectExists) {
-            return res.json({
-                status: "Failed",
-                data: "Project already exists"
-            });
-        }
-        if (!projectName) {
-            return res.json({
-                msg: "Project not found"
-            })
-        }
-        if (projectName) {
+  const { projectName, description, startDate, endDate, status } = req.body;
 
-            const updateProject = await Project.findByIdAndUpdate({ _id: req.params.id, user: req.userAuth }, {
-                projectName,
-            },
-                {
-                    returnDocument: 'after'
-                }
-            );
-            return res.json({
-                status: "Success",
-                message: "Project updated successfully",
-                data: updateProject,
-            })
-        }
+  try {
+    // 1. Find project by ID
+    const project = await Project.findById(req.params.id);
+
+    if (!project) {
+      return res.status(404).json({
+        status: "Failed",
+        message: "Project not found"
+      });
     }
-    catch (error) {
-        res.status(500).json({ 
-            status: "Failed",
-            message: error.message 
+
+    // 2. Check ownership
+    if (project.user.toString() !== req.userAuth) {
+      return res.status(403).json({
+        status: "Failed",
+        message: "Not authorized"
+      });
+    }
+
+    // 3. Prevent editing after completion
+    if (project.status === "completed") {
+      return res.status(400).json({
+        status: "Failed",
+        message: "Completed project cannot be modified"
+      });
+    }
+
+    // 4. Prevent duplicate project name (excluding current project)
+    if (projectName) {
+      const projectExists = await Project.findOne({
+        projectName,
+        _id: { $ne: project._id }
+      });
+
+      if (projectExists) {
+        return res.status(400).json({
+          status: "Failed",
+          message: "Project name already exists"
         });
+      }
     }
+
+    // 5. STATUS TRANSITION RULES
+    const validTransitions = {
+      draft: ['draft', 'in_progress'],
+      in_progress: ['in_progress', 'completed'],
+      completed: []
+    };
+
+    if (status) {
+      const currentStatus = project.status;
+
+      if (!validTransitions[currentStatus].includes(status)) {
+        return res.status(400).json({
+          status: "Failed",
+          message: `Cannot change status from ${currentStatus} to ${status}`
+        });
+      }
+    }
+
+    // 6. VALIDATE BEFORE COMPLETING
+    if (status === "completed") {
+      if (!projectName && !project.projectName) {
+        return res.status(400).json({
+          status: "Failed",
+          message: "Project name is required before completing"
+        });
+      }
+
+      if (!description && !project.description) {
+        return res.status(400).json({
+          status: "Failed",
+          message: "Description is required before completing"
+        });
+      }
+    }
+
+    // 7. UPDATE PROJECT
+    const updatedProject = await Project.findByIdAndUpdate(
+      req.params.id,
+      {
+        projectName,
+        description,
+        startDate,
+        endDate,
+        status: status || project.status
+      },
+      {
+        returnDocument: 'after',
+        runValidators: true
+      }
+    );
+
+    return res.json({
+      status: "Success",
+      message: "Project updated successfully",
+      data: updatedProject
+    });
+
+  } catch (error) {
+    res.status(500).json({
+      status: "Failed",
+      message: error.message
+    });
+  }
 };
+
+// const updateProjectCtrl = async (req, res) => {
+//     const { projectName, description, startDate, endDate } = req.body
+//     // const { ...rest } = req.body
+//     try {
+//         // find project by id and user.
+//         const project = await Project.findById(req.params.id);
+//         if (!project) {
+//             return res.status(404).json({
+//                 status: "Failed",
+//                 message: "Project not found"
+//             });
+//         }
+
+//         // find if project exists.
+//         const projectExists = await Project.findOne({ projectName })
+//         if (projectExists) {
+//             return res.json({
+//                 status: "Failed",
+//                 data: "Project already exists"
+//             });
+//         }
+//         if (!projectName) {
+//             return res.json({
+//                 msg: "Project not found"
+//             })
+//         }
+//         if (projectName) {
+
+//             const updateProject = await Project.findByIdAndUpdate({ _id: req.params.id, user: req.userAuth }, {
+//                 projectName, description, startDate, endDate,
+//                 // ...rest
+//             },
+//                 {
+//                     returnDocument: 'after'
+//                 }
+//             );
+//             return res.json({
+//                 status: "Success",
+//                 message: "Project updated successfully",
+//                 data: updateProject,
+//             })
+//         }
+//     }
+//     catch (error) {
+//         res.status(500).json({ 
+//             status: "Failed",
+//             message: error.message 
+//         });
+//     }
+// };
 
 // const updateProjectCtrl = async (req, res) => {
 //     const { projectName } = req.body;
