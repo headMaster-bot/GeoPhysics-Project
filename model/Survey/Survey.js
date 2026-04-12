@@ -13,7 +13,7 @@ const surveySchema = new mongoose.Schema({
     surveyObjective: {
         type: String,
         // required: [true, 'Survey objective is required'],
-        enum: ['Environmental Assessment', 'Ground Water Exploration', 'Engineering Investigation', 'Archaeological Survey'],
+        enum: ['Environmental Assessment', 'Groundwater Exploration', 'Engineering Investigation', 'Archaeological Survey'],
     },
     // Survey Area
     latitude: {

@@ -19,7 +19,7 @@ const createSurveyCtrl = async (req, res) => {
         // console.log(req.body); 
         const surveyExits = await Survey.findOne({ surveyName })
         if (surveyExits) {
-            res.json({
+            return res.json({
                 status: "failed",
                 message: "Survey already exist"
             })
