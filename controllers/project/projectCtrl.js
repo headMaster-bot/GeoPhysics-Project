@@ -2,91 +2,95 @@ const Project = require("../../model/Project/Project");
 const User = require("../../model/User/user");
 
 const createProjectCtrl = async (req, res) => {
-    const { projectName, description, startDate, endDate } = req.body;
+  const { projectName, description, startDate, endDate } = req.body;
 
-    try {
-        const userFound = await User.findById(req.userAuth);
+  try {
+    const userFound = await User.findById(req.userAuth);
 
-        if (!userFound) {
-            return res.status(404).json({
-                status: "Failed",
-                message: "User not found"
-            });
-        }
-
-        const projectExists = await Project.findOne({ projectName });
-
-        if (projectExists) {
-            return res.status(400).json({
-                status: "Failed",
-                message: "Project already exists"
-            });
-        }
-
-        // ✅ Create project
-        const project = await Project.create({
-            projectName,
-            description,
-            startDate,
-            endDate,
-            user: userFound._id,
-        });
-
-        // ✅ Increment totalProjects in User
-        const updatedUser = await User.findByIdAndUpdate(
-            req.userAuth,
-            { $inc: { totalProjects: 1 } },
-            { returnDocument: "after" }
-        );
-
-        res.status(201).json({
-            status: "Success",
-            message: "Project created successfully",
-            data: project,
-            totalProjects: updatedUser.totalProjects,
-        });
-
-    } catch (error) {
-        res.status(500).json({
-            message: error.message
-        });
+    if (!userFound) {
+      return res.status(404).json({
+        status: "Failed",
+        message: "User not found"
+      });
     }
+
+    const projectExists = await Project.findOne({ projectName });
+
+    if (projectExists) {
+      return res.status(400).json({
+        status: "Failed",
+        message: "Project already exists"
+      });
+    }
+
+    // ✅ Create project
+    const project = await Project.create({
+      projectName,
+      description,
+      startDate,
+      endDate,
+      user: userFound._id,
+    });
+
+    // push project to user's projects array
+    userFound.projects.push(project);
+    await userFound.save();
+
+    // ✅ Increment totalProjects in User
+    const updatedUser = await User.findByIdAndUpdate(
+      req.userAuth,
+      { $inc: { totalProjects: 1 } },
+      { returnDocument: "after" }
+    );
+
+    res.status(201).json({
+      status: "Success",
+      message: "Project created successfully",
+      data: project,
+      totalProjects: updatedUser.totalProjects,
+    });
+
+  } catch (error) {
+    res.status(500).json({
+      message: error.message
+    });
+  }
 };
 
 const getProjectsCtrl = async (req, res) => {
-    // console.log(req.userAuth, "user");
+  // console.log(req.userAuth, "user");
 
-    try {
-        // const userFound = await User.findById(req.userAuth);
-        // if (!userFound) {
-        //     res.json({
-        //         status: "Failed",
-        //         data: "User not found"
-        //     })
-        // }
-        const projects = await Project.find()
-        res.json({
-            status: "Success",
-            message: projects,
-            data: projects,
-        })
-    } catch (error) {
-        res.status(500).json({
-            message: error.message
-        });
-    }
+  try {
+    // const userFound = await User.findById(req.userAuth);
+    // if (!userFound) {
+    //     res.json({
+    //         status: "Failed",
+    //         data: "User not found"
+    //     })
+    // }
+    const projects = await Project.find()
+    res.json({
+      status: "Success",
+      message: projects,
+      data: projects,
+    })
+  } catch (error) {
+    res.status(500).json({
+      message: error.message
+    });
+  }
 };
 
 const getProjectCtrl = async (req, res) => {
-    try {
-        const project = await Project.findById(req.params.id).populate('linkedSurvey');
-        if (!project) return res.status(404).json({ message: 'Project not found' });
-        res.json(project);
-    } catch (error) {
-        res.status(500).json({
-            message: error.message
-        });
-    }
+  try {
+    const project = await Project.findById(req.params.id).populate('linkedSurvey');
+    if (!project) return res.status(404).json({ message: 'Project not found' });
+    res.json(project);
+  } catch (error) {
+    res.status(500).json({
+      message: error.message
+    });
+  }
 };
 
 const updateProjectCtrl = async (req, res) => {
@@ -277,29 +281,29 @@ const updateProjectCtrl = async (req, res) => {
 //     }
 // };
 const deleteProjectCtrl = async (req, res) => {
-    try {
-        const project = await Project.findByIdAndDelete(req.params.id);
-        if (!project) {
-            return res.status(404).json({ 
-                status: "Failed",
-                message: 'Project not found' 
-            });
-        }
-        res.json({ 
-            status: "Success",
-            message: 'Project deleted successfully'
-         });
-    } catch (error) {
-        res.status(500).json({ 
-            message: error.message
-         });
+  try {
+    const project = await Project.findByIdAndDelete(req.params.id);
+    if (!project) {
+      return res.status(404).json({
+        status: "Failed",
+        message: 'Project not found'
+      });
     }
+    res.json({
+      status: "Success",
+      message: 'Project deleted successfully'
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: error.message
+    });
+  }
 };
 
 module.exports = {
-    createProjectCtrl,
-    getProjectsCtrl,
-    getProjectCtrl,
-    updateProjectCtrl,
-    deleteProjectCtrl,
+  createProjectCtrl,
+  getProjectsCtrl,
+  getProjectCtrl,
+  updateProjectCtrl,
+  deleteProjectCtrl,
 };

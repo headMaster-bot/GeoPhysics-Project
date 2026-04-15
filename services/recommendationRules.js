@@ -1,7 +1,7 @@
 const recommendationRules = [
   {
     objective: "Environmental Assessment",
-    geology: "Nigerian Sedimentary Basin",
+    geology: "Nigeria Sedimentary Basin",
     methods: [
       { name: "Electrical Resistivity Tomography (ERT)", min: 0.5, max: 150 },
       { name: "Time-Domain Electromagnetic", min: 13, max: 300 },
@@ -13,8 +13,8 @@ const recommendationRules = [
     ]
   },
   {
-    objective: "env_ass",
-    geology: "Nigerian Basement Complex",
+    objective: "Environmental Assessment",
+    geology: "Nigeria Basement Complex",
     methods: [
       { name: "Vertical Electrical Sounding (VES)/ERT", min: 0.5, max: 150 },
       { name: "Frequency-Domain EM", min: 0, max: 70 },
@@ -25,7 +25,7 @@ const recommendationRules = [
   },
 
   {
-    objective: "gw_ex",
+    objective: "Groundwater Exploration",
     geology: "Nigerian Sedimentary Basin",
     methods: [
       { name: "Vertical Electrical Sounding", min: 0.5, max: 250 },
@@ -38,7 +38,7 @@ const recommendationRules = [
     ]
   },
   {
-    objective: "gw_ex",
+    objective: "Groundwater Exploration",
     geology: "Nigerian Basement Complex",
     methods: [
       { name: "Vertical Electrical Sounding (VES)/ERT", min: 0.5, max: 150 },
@@ -50,7 +50,7 @@ const recommendationRules = [
   },
 
   {
-    objective: "eng_inv",
+    objective: "Engineering Investigation",
     geology: "Nigerian Sedimentary Basin",
     methods: [
       { name: "Seismic Refraction", min: 1, max: 100 },
@@ -61,7 +61,7 @@ const recommendationRules = [
     ]
   },
   {
-    objective: "eng_inv",
+    objective: "Engineering Investigation",
     geology: "Nigerian Basement Complex",
     methods: [
       { name: "Seismic Refraction", min: 1, max: 70 },
@@ -73,7 +73,7 @@ const recommendationRules = [
   },
 
   {
-    objective: "arc_sur",
+    objective: "Archaeological Survey",
     geology: "Nigerian Sedimentary Basin",
     methods: [
       { name: "Ground Penetrating Radar (GPR)", min: 0.02, max: 8 },
@@ -84,7 +84,7 @@ const recommendationRules = [
     ]
   },
   {
-    objective: "arc_sur",
+    objective: "Archaeological Survey",
     geology: "Nigerian Basement Complex",
     methods: [
       { name: "Magnetometry", min: 0.05, max: 2 },

@@ -1,8 +1,20 @@
 const Story = require("../../model/Story/Story");
+const User = require("../../model/User/user");
 
 const createStoryCtrl = async (req, res) => {
+    // console.log("req.userAuth:", req.userAuth);
     const { title, description, epic, priority, points, assigned } = req.body;
     try {
+        // find user
+        const userFound = await User.findById(req.userAuth);
+        // console.log(userFound, "User");
+        
+        if (!userFound) {
+            return res.status(404).json({
+                status: "Failed",
+                message: "User not found"
+            });
+        }
         const storyExists = await Story.findOne({ title });
         if (storyExists) {
             return res.json({
@@ -19,6 +31,9 @@ const createStoryCtrl = async (req, res) => {
             assigned,
             user: req.userAuth,
         })
+        // push the story to the user's stories array
+        userFound.stories.push(createStory);
+        await userFound.save();
         res.json({ 
             status: "Success",
             message: createStory,

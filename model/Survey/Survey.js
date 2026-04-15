@@ -70,15 +70,23 @@ const surveySchema = new mongoose.Schema({
     targetCompletionDate: {
         type: Date,
     },
-    miniDepth: {
+    minDepth: {
         type: Number,
     },
     maxDepth: {
         type: Number,
     },
-    geologicalSettings: {
+    geologicalSetting: {
         type: String,
-        enum: ['Nigerian Sedimentary Basin', 'Nigerian Basement Complex'],
+        enum: ['Nigeria Sedimentary Basin', 'Nigeria Basement Complex'],
+    },
+    // siteConstraints: {
+    //     type: [String],
+    //     default: [],
+    // },
+    recommendedMethods: {
+        type: Array,
+        default: [],
     },
     // References
     user: {

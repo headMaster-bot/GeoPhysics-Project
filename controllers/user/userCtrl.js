@@ -2,6 +2,11 @@ const User = require("../../model/User/user");
 const bcrypt = require('bcryptjs');
 const generateToken = require("../../utils/generateToken");
 const getTokenFromHeader = require("../../utils/getTokenFromHeader");
+const Project = require("../../model/Project/Project");
+const Epic = require("../../model/EPic/Epic");
+const Story = require("../../model/Story/Story");
+const Sprint = require("../../model/Sprint/Sprint");
+const Survey = require("../../model/Survey/Survey");
 
 
 // @desc    User registration controller
@@ -153,14 +158,14 @@ const updateUserProfileCtrl = async (req, res) => {
             },
             { new: true }
         );
-        
+
         if (!updatedUser) {
             return res.status(404).json({
                 status: "Failed",
                 message: "Failed to update user",
             });
         }
-        
+
         res.json({
             status: "Success",
             message: updatedUser,
@@ -173,6 +178,33 @@ const updateUserProfileCtrl = async (req, res) => {
     }
 }
 
+const deleteUserAccountCtrl = async (req, res) => {
+    try {
+        // find the user to  be deleted
+        const userToDelete = await User.findById(req.userAuth);
+        if (!userToDelete) {
+            return res.status(404).json({
+                status: "Failed",
+                message: "User not found",
+            })
+        }
+        await Project.deleteMany({ user: req.userAuth });
+        await Epic.deleteMany({ user: req.userAuth });
+        await Story.deleteMany({ user: req.userAuth });
+        await Sprint.deleteMany({ user: req.userAuth });
+        await Survey.deleteMany({ user: req.userAuth });
+
+        // delete the user account
+        await userToDelete.deleteOne();
+        res.status(200).json({
+            status: "Success",
+            message: "User account deleted successfully",
+        })
+    } catch (error) {
+        res.json(error.message);
+    }
+}
+
 
 module.exports = {
     userRegisterCtrl,
@@ -180,4 +212,5 @@ module.exports = {
     usersCtrl,
     userProfileCtrl,
     updateUserProfileCtrl,
+    deleteUserAccountCtrl
 }

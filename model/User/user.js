@@ -55,6 +55,10 @@ const userSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Project',
     }],
+    stories: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Story',
+    }],
 },
     {
         timestamps: true,
@@ -77,13 +81,25 @@ userSchema.virtual("initials").get(function () {
 // ✅ Virtual for project count
 userSchema.virtual("projectCount").get(function () {
     return this.projects ? this.projects.length : 0;
-})
+});
+// virtual for story count
+userSchema.virtual("storyCount").get(function () {
+    return this.stories ? this.stories.length : 0;
+});
 
 // ✅ Virtual for isActive
+// userSchema.virtual("isActive").get(function () {
+//     // A user is considered active if they have at least one project
+//     return this.projectCount && this.projects.length > 0;
+// })
+
+// userSchema.virtual("isActive").get(function () {
+//     return this.projects && this.projects.length > 0;
+// });
+
 userSchema.virtual("isActive").get(function () {
-    // A user is considered active if they have at least one project
-    return this.projectCount > 0;
-})
+    return this.projects ? this.projects.length : 0;
+});
 
 
 const User = mongoose.model('User', userSchema);

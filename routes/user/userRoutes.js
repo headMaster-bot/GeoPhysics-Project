@@ -1,7 +1,8 @@
 const express = require('express');
 const {
     userRegisterCtrl, userLoginCtrl,
-    usersCtrl, userProfileCtrl, updateUserProfileCtrl
+    usersCtrl, userProfileCtrl, updateUserProfileCtrl,
+    deleteUserAccountCtrl
 } = require('../../controllers/user/userCtrl');
 const isLogIn = require('../../middlewares/isLogIn');
 const userRouter = express.Router()
@@ -16,5 +17,7 @@ userRouter.get("/", usersCtrl)
 userRouter.get("/profile", isLogIn, userProfileCtrl)
 // update user profile
 userRouter.put("/update/profile/:id", isLogIn, updateUserProfileCtrl)
+// delete user account
+userRouter.delete("/delete/account", isLogIn, deleteUserAccountCtrl)
 
 module.exports = userRouter;
