@@ -17,9 +17,18 @@ const createSurveyCtrl = async (req, res) => {
 
     try {
         // console.log(req.body); 
-        const surveyExits = await Survey.findOne({ surveyName })
+        const surveyExists = await Survey.findOne({
+            surveyName: surveyName.trim()
+        });
+
+        if (surveyExists) {
+            return res.status(401).json({
+                status: "failed",
+                message: "Survey already exists"
+            });
+        } const surveyExits = await Survey.findOne({ surveyName })
         if (surveyExits) {
-           return res.json({
+            return res.json({
                 status: "failed",
                 message: "Survey already exist"
             })
@@ -278,76 +287,104 @@ const getSurveyCtrl = async (req, res) => {
 // const getRecommendedMethods = require("../services/recommendationEngine");
 
 const updateSurveyCtrl = async (req, res) => {
-  try {
-    const {
-   surveyObjective,
-  geologicalSetting,
-  minDepth,
-  maxDepth,
-  latitude,
-  longitude,
-  vegetationDensity,
-  ambientNoise,
-  layoutPattern,
-  stationSpacing,
-  lineSpacing
-    } = req.body;
+    try {
+        const {
+            surveyName,
+            description,
+            surveyObjective,
+            geologicalSetting,
+            minDepth,
+            maxDepth,
+            latitude,
+            longitude,
+            vegetationDensity,
+            ambientNoise,
+            layoutPattern,
+            stationSpacing,
+            lineSpacing,
+            siteConstraints
+        } = req.body;
 
-    const survey = await Survey.findById(req.params.id);
+        // ✅ DEBUG: Log incoming data
+        console.log('=== BACKEND: updateSurveyCtrl ===');
+        console.log('Incoming data:', {
+            surveyObjective: `"${surveyObjective}"`,
+            geologicalSetting: `"${geologicalSetting}"`,
+            minDepth: `${minDepth} (type: ${typeof minDepth})`,
+            maxDepth: `${maxDepth} (type: ${typeof maxDepth})`,
+            siteConstraints: siteConstraints
+        });
 
-    if (!survey) {
-      return res.status(404).json({ message: "Survey not found" });
+        const survey = await Survey.findById(req.params.id);
+
+        if (!survey) {
+            return res.status(404).json({ message: "Survey not found" });
+        }
+
+        if (survey.user.toString() !== req.userAuth) {
+            return res.status(403).json({ message: "Not authorized" });
+        }
+
+        // ✅ Parse depth to numbers if they're strings
+        const minDepthNum = typeof minDepth === 'string' ? parseFloat(minDepth) : minDepth;
+        const maxDepthNum = typeof maxDepth === 'string' ? parseFloat(maxDepth) : maxDepth;
+
+        console.log('After parsing:', {
+            minDepthNum: `${minDepthNum} (type: ${typeof minDepthNum})`,
+            maxDepthNum: `${maxDepthNum} (type: ${typeof maxDepthNum})`
+        });
+
+        const recommendedMethods = getRecommendedMethods({
+            surveyObjective,
+            geologicalSetting,
+            minDepth: minDepthNum,
+            maxDepth: maxDepthNum
+        });
+
+        // console.log('Recommended Methods Result:', recommendedMethods);
+
+        const updatedSurvey = await Survey.findByIdAndUpdate(
+            req.params.id,
+            {
+                // surveyName,
+                surveyObjective,
+                geologicalSetting,
+                minDepth: minDepthNum,
+                maxDepth: maxDepthNum,
+                latitude,
+                longitude,
+                vegetationDensity,
+                ambientNoise,
+                layoutPattern,
+                stationSpacing,
+                lineSpacing,
+                siteConstraints,
+                recommendedMethods
+            },
+            { returnDocument: "after", runValidators: true }
+        );
+
+        if (!updatedSurvey) {
+            return res.status(404).json({
+                status: "error",
+                message: "Survey not found or update failed"
+            });
+        }
+
+        res.json({
+            status: "success",
+            survey: updatedSurvey,
+            recommendedMethods: recommendedMethods && recommendedMethods.length
+                ? recommendedMethods
+                : ["No method matches the selected depth"]
+            //   recommendedMethods: recommendedMethods && recommendedMethods.length
+            //     ? recommendedMethods
+            //     : ["No method matches the selected depth"]
+        });
+
+    } catch (error) {
+        res.status(500).json({ message: error.message });
     }
-
-    if (survey.user.toString() !== req.userAuth) {
-      return res.status(403).json({ message: "Not authorized" });
-    }
-
-    const recommendedMethods = getRecommendedMethods({
-      surveyObjective,
-      geologicalSetting,
-      minDepth,
-      maxDepth
-    });
-
-    const updatedSurvey = await Survey.findByIdAndUpdate(
-      req.params.id,
-      {
-        // surveyName,
-        surveyObjective,
-    geologicalSetting,
-    minDepth,
-    maxDepth,
-    latitude,
-    longitude,
-    vegetationDensity,
-    ambientNoise,
-    layoutPattern,
-    stationSpacing,
-    lineSpacing,
-    recommendedMethods  
-      },
-      { returnDocument: "after", runValidators: true }
-    );
-
-    if (!updatedSurvey) {
-      return res.status(404).json({
-        status: "error",
-        message: "Survey not found or update failed"
-      });
-    }
-
-    res.json({
-      status: "success",
-      survey: updatedSurvey,
-      recommendedMethods: recommendedMethods && recommendedMethods.length
-        ? recommendedMethods
-        : ["No method matches the selected depth"]
-    });
-
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
 };
 
 const deleteSurveyCtrl = async (req, res) => {

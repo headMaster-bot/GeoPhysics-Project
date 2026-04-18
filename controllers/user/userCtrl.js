@@ -116,7 +116,7 @@ const userProfileCtrl = async (req, res) => {
     // console.log(req.userAuth, "ctrl");
 
     try {
-        const user = await User.findById(req.userAuth).populate("survey")
+        const user = await User.findById(req.userAuth).populate('projects').populate('survey');
         // console.log(user);
         // const token = getTokenFromHeader(req);
         // console.log(token, "123");

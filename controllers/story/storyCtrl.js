@@ -17,7 +17,7 @@ const createStoryCtrl = async (req, res) => {
         }
         const storyExists = await Story.findOne({ title });
         if (storyExists) {
-            return res.json({
+            return res.status(400).json({
                 status: "Failed",
                 message: "Story with this title already exists"
             });
@@ -34,7 +34,7 @@ const createStoryCtrl = async (req, res) => {
         // push the story to the user's stories array
         userFound.stories.push(createStory);
         await userFound.save();
-        res.json({ 
+        res.status(201).json({ 
             status: "Success",
             message: createStory,
         });

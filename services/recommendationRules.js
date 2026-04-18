@@ -26,7 +26,7 @@ const recommendationRules = [
 
   {
     objective: "Groundwater Exploration",
-    geology: "Nigerian Sedimentary Basin",
+    geology: "Nigeria Sedimentary Basin",
     methods: [
       { name: "Vertical Electrical Sounding", min: 0.5, max: 250 },
       { name: "Time-Domain Electromagnetic", min: 13, max: 500 },
@@ -39,7 +39,7 @@ const recommendationRules = [
   },
   {
     objective: "Groundwater Exploration",
-    geology: "Nigerian Basement Complex",
+    geology: "Nigeria Basement Complex",
     methods: [
       { name: "Vertical Electrical Sounding (VES)/ERT", min: 0.5, max: 150 },
       { name: "Frequency-Domain EM", min: 0, max: 70 },
@@ -51,7 +51,7 @@ const recommendationRules = [
 
   {
     objective: "Engineering Investigation",
-    geology: "Nigerian Sedimentary Basin",
+    geology: "Nigeria Sedimentary Basin",
     methods: [
       { name: "Seismic Refraction", min: 1, max: 100 },
       { name: "Multichannel Analysis of Surface Waves (MASW)", min: 0.5, max: 60 },
@@ -62,7 +62,7 @@ const recommendationRules = [
   },
   {
     objective: "Engineering Investigation",
-    geology: "Nigerian Basement Complex",
+    geology: "Nigeria Basement Complex",
     methods: [
       { name: "Seismic Refraction", min: 1, max: 70 },
       { name: "Electrical Resistivity (VES / ERT)", min: 0.5, max: 150 },
@@ -74,24 +74,24 @@ const recommendationRules = [
 
   {
     objective: "Archaeological Survey",
-    geology: "Nigerian Sedimentary Basin",
+    geology: "Nigeria Sedimentary Basin",
     methods: [
-      { name: "Ground Penetrating Radar (GPR)", min: 0.02, max: 8 },
-      { name: "Electrical Resistivity Tomography", min: 0.1, max: 30 },
-      { name: "Magnetometry", min: 0.05, max: 3 },
-      { name: "Frequency-Domain EM", min: 0.1, max: 5 },
-      { name: "Induced Polarization", min: 0.3, max: 25 }
+      { name: "Ground Penetrating Radar (GPR)", min: 0.02, max: 50 },
+      { name: "Electrical Resistivity Tomography", min: 0.1, max: 100 },
+      { name: "Magnetometry", min: 0.05, max: 30 },
+      { name: "Frequency-Domain EM", min: 0.1, max: 50 },
+      { name: "Induced Polarization", min: 0.3, max: 100 }
     ]
   },
   {
     objective: "Archaeological Survey",
-    geology: "Nigerian Basement Complex",
+    geology: "Nigeria Basement Complex",
     methods: [
-      { name: "Magnetometry", min: 0.05, max: 2 },
-      { name: "Ground Penetrating Radar (GPR)", min: 0.02, max: 12 },
-      { name: "Electrical Resistivity Tomography", min: 0.1, max: 20 },
-      { name: "Induced Polarization", min: 0.3, max: 20 },
-      { name: "Frequency-Domain EM", min: 0.1, max: 5 }
+      { name: "Magnetometry", min: 0.05, max: 30 },
+      { name: "Ground Penetrating Radar (GPR)", min: 0.02, max: 50 },
+      { name: "Electrical Resistivity Tomography", min: 0.1, max: 100 },
+      { name: "Induced Polarization", min: 0.3, max: 100 },
+      { name: "Frequency-Domain EM", min: 0.1, max: 50 }
     ]
   }
 ];

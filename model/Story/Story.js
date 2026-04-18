@@ -8,11 +8,11 @@ const storySchema = new mongoose.Schema({
     description: {
         type: String,
     },
-    epic: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Epic',
-        required: true,
-    },
+    // epic: {
+    //     type: mongoose.Schema.Types.ObjectId,
+    //     ref: 'Epic',
+    //     required: true,
+    // },
     user: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',

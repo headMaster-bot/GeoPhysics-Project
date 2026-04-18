@@ -1,11 +1,11 @@
 const mongoose = require('mongoose');
 
 const surveySchema = new mongoose.Schema({
-   surveyName: {
-    type: String,
-    // required: [true, 'Survey name is required'], // ✅ correct message
-    trim: true,
-},
+    surveyName: {
+        type: String,
+        // required: [true, 'Survey name is required'], // ✅ correct message
+        trim: true,
+    },
     description: {
         type: String,
         trim: true,
@@ -46,14 +46,14 @@ const surveySchema = new mongoose.Schema({
         type: Number,
         default: 0,
     },
-    layoutPattern:{
+    layoutPattern: {
         type: String,
         enum: ['grid', 'linear', 'random'],
     },
-    stationSpacing:{
+    stationSpacing: {
         type: Number,
     },
-    lineSpacing:{
+    lineSpacing: {
         type: Number,
     },
     // Client Information

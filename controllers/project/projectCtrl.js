@@ -145,16 +145,16 @@ const updateProjectCtrl = async (req, res) => {
       completed: []
     };
 
-    if (status) {
-      const currentStatus = project.status;
+    // if (status) {
+    //   const currentStatus = project.status;
 
-      if (!validTransitions[currentStatus].includes(status)) {
-        return res.status(400).json({
-          status: "Failed",
-          message: `Cannot change status from ${currentStatus} to ${status}`
-        });
-      }
-    }
+    //   if (!validTransitions[currentStatus].includes(status)) {
+    //     return res.status(400).json({
+    //       status: "Failed",
+    //       message: `Cannot change status from ${currentStatus} to ${status}`
+    //     });
+    //   }
+    // }
 
     // 6. VALIDATE BEFORE COMPLETING
     if (status === "completed") {
