@@ -14,45 +14,60 @@ const Survey = require("../../model/Survey/Survey");
 // @access  Public
 
 const userRegisterCtrl = async (req, res) => {
-    // console.log(req.body, "Register");
-    const { fullName, email, password, organisation, role } = req.body
-    try {
-        // Check if passwords match
+    const { fullName, email, password, organisation, role } = req.body;
 
-        const emailExists = await User.findOne({ email })
+    try {
+        // Check if user exists
+        const emailExists = await User.findOne({ email });
         if (emailExists) {
             return res.status(400).json({
                 status: "Failed",
                 message: "Email already exists"
-            })
+            });
         }
-        // hash password
-        // salt
+
+        // Hash password
         const genSalt = await bcrypt.genSalt(10);
-        // hash
         const hashedPassword = await bcrypt.hash(password, genSalt);
+
+        // ✅ FIX: normalize role (Title Case)
+        const formattedRole =
+            role
+                ? role.trim().charAt(0).toUpperCase() + role.trim().slice(1).toLowerCase()
+                : 'Geophysic';
+
+        // Optional safety check (recommended)
+        const allowedRoles = ['Geophysic', 'Geologist', 'Engineer'];
+
+        if (!allowedRoles.includes(formattedRole)) {
+            return res.status(400).json({
+                status: "Failed",
+                message: "Invalid role selected"
+            });
+        }
+
+        // Create user
         const createUser = await User.create({
             fullName,
             email,
             password: hashedPassword,
             organisation,
-            role: role || 'user', // default to 'user' if not provided
+            role: formattedRole,
         });
-        // console.log(createUser, "Geophysics");
-
 
         return res.status(201).json({
             status: "success",
             message: "User registered successfully",
             user: createUser
-        })
+        });
+
     } catch (error) {
-        res.status(500).json({
+        return res.status(500).json({
             status: "error",
             message: error.message
-        })
+        });
     }
-}
+};
 
 // @desc    User login controller
 // @route   POST /api/v1/users/login
@@ -116,7 +131,7 @@ const userProfileCtrl = async (req, res) => {
     // console.log(req.userAuth, "ctrl");
 
     try {
-        const user = await User.findById(req.userAuth).populate('projects').populate('survey');
+        const user = await User.findById(req.userAuth).populate('projects').populate('survey').populate("stories");
         // console.log(user);
         // const token = getTokenFromHeader(req);
         // console.log(token, "123");
