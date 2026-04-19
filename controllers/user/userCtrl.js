@@ -34,10 +34,10 @@ const userRegisterCtrl = async (req, res) => {
         const formattedRole =
             role
                 ? role.trim().charAt(0).toUpperCase() + role.trim().slice(1).toLowerCase()
-                : 'Geophysic';
+                : 'Geophysics';
 
         // Optional safety check (recommended)
-        const allowedRoles = ['Geophysic', 'Geologist', 'Engineer'];
+        const allowedRoles = ['Geophysics', 'Geologist', 'Engineer'];
 
         if (!allowedRoles.includes(formattedRole)) {
             return res.status(400).json({
