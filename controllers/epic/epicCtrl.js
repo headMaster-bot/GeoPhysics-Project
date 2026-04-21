@@ -84,7 +84,7 @@ const createEpicCtrl = async (req, res) => {
 
 const getAllEpicsCtrl = async (req, res) => {
     try {
-        const epics = await Epic.find().populate('project');
+        const epics = await Epic.find().populate("stories");
         return res.json({
             status: "Success",
             message: epics,
@@ -93,6 +93,37 @@ const getAllEpicsCtrl = async (req, res) => {
         res.json(error.message)
     }
 }
+
+// const Epic = require("../models/Epic");
+
+// const getAllEpicsCtrl = async (req, res) => {
+//   try {
+//     const { projectId } = req.params;
+
+//     if (!projectId) {
+//       return res.status(400).json({
+//         status: "Error",
+//         message: "projectId is required",
+//       });
+//     }
+
+//     // const epics = await Epic.find({ project: projectId })
+//     const epics = await Epic.find({}).populate("stories")
+//     //   .populate("project");
+
+//     return res.status(200).json({
+//       status: "Success",
+//       data: epics,
+//     });
+
+//   } catch (error) {
+//     return res.status(500).json({
+//       status: "Error",
+//       message: error.message,
+//     });
+//   }
+// };
+
 // single-epic
 const getEpicCtrl = async (req, res) => {
     try {

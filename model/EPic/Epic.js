@@ -16,6 +16,10 @@ const epicShema = new mongoose.Schema({
         ref: 'Project',
         required: true,
     },
+    stories: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Story',
+    }],
     user: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',

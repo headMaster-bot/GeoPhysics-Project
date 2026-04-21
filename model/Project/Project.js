@@ -38,6 +38,10 @@ const projectSchema = new mongoose.Schema({
             required: true,
         },
     }],
+    // stories: [{
+    //    type: mongoose.Schema.Types.ObjectId,
+    //    ref: "Story"
+    // }],
     user: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
@@ -45,8 +49,8 @@ const projectSchema = new mongoose.Schema({
     },
     status: {
         type: String,
-        enum: ['draft', 'in_progress', 'completed'],
-        default: 'draft',
+        enum: ['in_progress', 'draft', 'completed'],
+        default: 'in_progress',
     },
 }, {
     timestamps: true,

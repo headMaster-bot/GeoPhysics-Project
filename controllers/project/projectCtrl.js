@@ -59,15 +59,7 @@ const createProjectCtrl = async (req, res) => {
 
 const getProjectsCtrl = async (req, res) => {
   // console.log(req.userAuth, "user");
-
   try {
-    // const userFound = await User.findById(req.userAuth);
-    // if (!userFound) {
-    //     res.json({
-    //         status: "Failed",
-    //         data: "User not found"
-    //     })
-    // }
     const projects = await Project.find()
     res.json({
       status: "Success",
@@ -203,83 +195,6 @@ const updateProjectCtrl = async (req, res) => {
   }
 };
 
-// const updateProjectCtrl = async (req, res) => {
-//     const { projectName, description, startDate, endDate } = req.body
-//     // const { ...rest } = req.body
-//     try {
-//         // find project by id and user.
-//         const project = await Project.findById(req.params.id);
-//         if (!project) {
-//             return res.status(404).json({
-//                 status: "Failed",
-//                 message: "Project not found"
-//             });
-//         }
-
-//         // find if project exists.
-//         const projectExists = await Project.findOne({ projectName })
-//         if (projectExists) {
-//             return res.json({
-//                 status: "Failed",
-//                 data: "Project already exists"
-//             });
-//         }
-//         if (!projectName) {
-//             return res.json({
-//                 msg: "Project not found"
-//             })
-//         }
-//         if (projectName) {
-
-//             const updateProject = await Project.findByIdAndUpdate({ _id: req.params.id, user: req.userAuth }, {
-//                 projectName, description, startDate, endDate,
-//                 // ...rest
-//             },
-//                 {
-//                     returnDocument: 'after'
-//                 }
-//             );
-//             return res.json({
-//                 status: "Success",
-//                 message: "Project updated successfully",
-//                 data: updateProject,
-//             })
-//         }
-//     }
-//     catch (error) {
-//         res.status(500).json({ 
-//             status: "Failed",
-//             message: error.message 
-//         });
-//     }
-// };
-
-// const updateProjectCtrl = async (req, res) => {
-//     const { projectName } = req.body;
-
-//     try {
-
-//         const project = await Project.findOneAndUpdate(
-//             { _id: req.params.id, user: req.userAuth }, // ✅ filter
-//             { projectName }, // ✅ update
-//             { new: true } // ✅ correct place
-//         );
-//         if (!project) {
-//             return res.status(404).json({
-//                 status: "Failed",
-//                 message: "Project not found or not authorized",
-//             });
-//         }
-
-//         res.json({
-//             status: "Success",
-//             data: project,
-//         });
-
-//     } catch (error) {
-//         res.status(500).json({ message: error.message });
-//     }
-// };
 const deleteProjectCtrl = async (req, res) => {
   try {
     const project = await Project.findByIdAndDelete(req.params.id);

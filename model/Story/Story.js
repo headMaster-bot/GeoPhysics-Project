@@ -8,15 +8,15 @@ const storySchema = new mongoose.Schema({
     description: {
         type: String,
     },
-    // epic: {
-    //     type: mongoose.Schema.Types.ObjectId,
-    //     ref: 'Epic',
-    //     required: true,
-    // },
+    epicId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Epic',
+        required: true,
+    },
     user: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
-        required: true, 
+        required: true,
     },
     priority: {
         type: String,
@@ -24,9 +24,24 @@ const storySchema = new mongoose.Schema({
     points: {
         type: Number,
     },
+    epic: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Epic',
+    },
+    // projectId: {
+    //     type: mongoose.Schema.Types.ObjectId,
+    //     ref: "Project",
+    //     required: true,
+    // },
+
     assigned: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
+    },
+    status: {
+        type: String,
+        enum: ['Pending', 'In Progress', 'Completed'],
+        default: 'Pending',
     }
 },
     {

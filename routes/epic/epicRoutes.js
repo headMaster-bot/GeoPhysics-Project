@@ -4,7 +4,7 @@ const isLogIn = require("../../middlewares/isLogIn");
 const epicRoutes = express.Router();
 
 epicRoutes.post("/create-epic",isLogIn, createEpicCtrl)
-epicRoutes.get("/all-epics", getAllEpicsCtrl)
+epicRoutes.get("/all-epics", isLogIn, getAllEpicsCtrl)
 epicRoutes.get("/single-epic/:id",isLogIn, getEpicCtrl)
 // epicRoutes.get("/project/:projectId", isLogIn, getEpicsByProjectCtrl)
 
