@@ -387,6 +387,71 @@ const updateSurveyCtrl = async (req, res) => {
     }
 };
 
+// status update
+const updateSurveyStatusCtrl = async (req, res) => {
+  try {
+    const { surveyId, status } = req.body;
+
+    const validStatuses = ["in_progress", "draft", "completed"];
+
+    if (!validStatuses.includes(status)) {
+      return res.status(400).json({
+        message: "Invalid status",
+      });
+    }
+
+    const survey = await Survey.findByIdAndUpdate(
+      surveyId,
+      { status },
+      { returnDocument: "after" }
+    );
+
+    res.json({
+      status: "Success",
+      data: survey,
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// save to draft
+const saveDraftCtrl = async (req, res) => {
+    console.log(req.userAuth, "save");
+    
+  const { surveyId, ...rest } = req.body;
+
+  let survey;
+
+  if (surveyId) {
+    survey = await Survey.findByIdAndUpdate(
+      surveyId,
+      { ...rest, status: "draft" },
+      { new: true }
+    );
+  } else {
+    survey = await Survey.create({
+      ...rest,
+      status: "draft",
+      user: req.userAuth,
+    });
+  }
+
+  res.json(survey);
+};
+
+// get draft
+const DraftsCtrl = async (req, res) => {
+  const { status } = req.query;
+
+  const surveys = await Survey.find({
+    user: req.userAuth,
+    ...(status && { status }),
+  }).sort({ createdAt: -1 });
+
+  res.json(surveys);
+};
+
 const deleteSurveyCtrl = async (req, res) => {
     try {
         const survey = await Survey.findById(req.params.id);
@@ -431,4 +496,7 @@ module.exports = {
     getSurveyCtrl,
     updateSurveyCtrl,
     deleteSurveyCtrl,
+    updateSurveyStatusCtrl,
+    saveDraftCtrl,
+    DraftsCtrl,
 };

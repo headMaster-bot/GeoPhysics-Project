@@ -96,8 +96,8 @@ const surveySchema = new mongoose.Schema({
     },
     status: {
         type: String,
-        enum: ['draft', 'in_progress', 'completed'],
-        default: 'draft',
+        enum: ['active','draft', 'completed'],
+        default: 'active',
     },
 }, {
     timestamps: true,

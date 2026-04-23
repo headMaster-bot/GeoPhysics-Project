@@ -5,6 +5,10 @@ const {
     getSurveyCtrl,
     updateSurveyCtrl,
     deleteSurveyCtrl,
+    updateSurveyStatusCtrl,
+    saveDraftCtrl,
+    getSurveysDraftCtrl,
+    DraftsCtrl,
 } = require('../../controllers/survey/surveyCtrl');
 const isLogIn = require('../../middlewares/isLogIn');
 
@@ -17,10 +21,20 @@ surveyRouter.post("/create-survey", isLogIn, createSurveyCtrl);
 surveyRouter.get("/all-surveys", getUserSurveysCtrl);
 
 // Get a single survey
-surveyRouter.get("/:id", isLogIn, getSurveyCtrl);
+// surveyRouter.get("/:id", isLogIn, getSurveyCtrl);
 
 // Update a survey
 surveyRouter.put("/update/:id", isLogIn, updateSurveyCtrl);
+// update status
+surveyRouter.put("/update-status", updateSurveyStatusCtrl);
+// save to draft
+surveyRouter.post("/save-to-draft", isLogIn, saveDraftCtrl);
+// get draft
+surveyRouter.get("/gets-draft", isLogIn, DraftsCtrl);
+// surveyRouter.get("/gets-draft", (req, res) => {
+//   console.log("HIT GETS-DRAFT ROUTE");
+//   res.send("draft route works");
+// });
 
 // Delete a survey
 surveyRouter.delete("/:id", isLogIn, deleteSurveyCtrl);
