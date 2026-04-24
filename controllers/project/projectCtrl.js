@@ -132,8 +132,8 @@ const updateProjectCtrl = async (req, res) => {
 
     // 5. STATUS TRANSITION RULES
     const validTransitions = {
-      draft: ['draft', 'in_progress'],
-      in_progress: ['in_progress', 'completed'],
+      draft: ['in_progress', 'draft'],
+      in_progress: ['draft', 'completed'],
       completed: []
     };
 
@@ -215,10 +215,88 @@ const deleteProjectCtrl = async (req, res) => {
   }
 };
 
+// saves project to draft
+// saveDraftCtrl.js
+
+const saveDraftCtrl = async (req, res) => {
+  try {
+    const { projectId, ...data } = req.body;
+
+    let survey;
+
+    if (projectId) {
+      // 🔁 UPDATE EXISTING DRAFT
+      survey = await Survey.findByIdAndUpdate(
+        surveyId,
+        { ...data, status: "draft" },
+        { new: true, runValidators: false } // ✅ KEY
+        // { new: true }
+      );
+    } else {
+      // 🆕 CREATE NEW DRAFT
+      survey = await Project.create({
+        ...data,
+        user: req.userAuth,
+        status: "draft",
+      });
+    }
+
+    res.json({
+      status: "success",
+      survey,
+    });
+  } catch (error) {
+    res.status(500).json({
+      status: "error",
+      message: error.message,
+    });
+  }
+};
+// get all draft by query
+const DraftsCtrl = async (req, res) => {
+  const { status } = req.query;
+
+  const projects = await Project.find({
+    user: req.userAuth,
+    ...(status && { status }),
+  }).sort({ createdAt: -1 });
+
+  res.json(projects);
+};
+
+// controllers/survey/getDraftCtrl.js
+const getDraftCtrl = async (req, res) => {
+  try {
+    const { projectId } = req.params;
+
+    const project = await Project.findById(projectId);
+
+    if (!project) {
+      return res.status(404).json({ message: "Project not found" });
+    }
+
+    res.json({
+      status: "success",
+      project,
+    });
+  } catch (error) {
+    res.status(500).json({
+      status: "error",
+      message: error.message,
+    });
+  }
+};
+
+
+// module.exports = saveDraftCtrl;
+
 module.exports = {
   createProjectCtrl,
   getProjectsCtrl,
   getProjectCtrl,
   updateProjectCtrl,
   deleteProjectCtrl,
+  saveDraftCtrl,
+  DraftsCtrl,
+  getDraftCtrl,
 };

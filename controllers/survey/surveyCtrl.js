@@ -452,6 +452,31 @@ const DraftsCtrl = async (req, res) => {
   res.json(surveys);
 };
 
+// controllers/survey/getDraftCtrl.js
+const getDraftCtrl = async (req, res) => {
+  try {
+    const { surveyId } = req.params;
+
+    const survey = await Survey.findById(surveyId);
+
+    if (!survey) {
+      return res.status(404).json({ message: "Survey not found" });
+    }
+
+    res.json({
+      status: "success",
+      survey,
+    });
+  } catch (error) {
+    res.status(500).json({
+      status: "error",
+      message: error.message,
+    });
+  }
+};
+
+module.exports = getDraftCtrl;
+
 const deleteSurveyCtrl = async (req, res) => {
     try {
         const survey = await Survey.findById(req.params.id);
@@ -499,4 +524,5 @@ module.exports = {
     updateSurveyStatusCtrl,
     saveDraftCtrl,
     DraftsCtrl,
+    getDraftCtrl,
 };

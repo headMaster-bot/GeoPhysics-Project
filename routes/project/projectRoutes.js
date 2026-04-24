@@ -1,5 +1,10 @@
 const express = require('express');
-const { createProjectCtrl, getProjectsCtrl, getProjectCtrl, updateProjectCtrl, deleteProjectCtrl } = require('../../controllers/project/projectCtrl');
+const { createProjectCtrl, getProjectsCtrl, getProjectCtrl,
+    updateProjectCtrl, deleteProjectCtrl,
+    getDraftCtrl,
+    saveDraftCtrl,
+    DraftsCtrl
+} = require('../../controllers/project/projectCtrl');
 const isLogIn = require('../../middlewares/isLogIn');
 const projectRouter = express.Router();
 
@@ -10,7 +15,13 @@ projectRouter.get("/all-projects", getProjectsCtrl);
 // get single project
 projectRouter.get("/single-project/:id", isLogIn, getProjectCtrl);
 // update project
-projectRouter.put("/update/:id",isLogIn, updateProjectCtrl);
+projectRouter.put("/update/:id", isLogIn, updateProjectCtrl);
+// save to draft
+projectRouter.post("/save-to-draft", isLogIn, saveDraftCtrl);
+// get draft
+projectRouter.get("/gets-draft", isLogIn, DraftsCtrl);
+// draft by id
+projectRouter.get("/draft/:projectId", isLogIn, getDraftCtrl);
 // delete project
 projectRouter.delete("/delete/:id", isLogIn, deleteProjectCtrl);
 

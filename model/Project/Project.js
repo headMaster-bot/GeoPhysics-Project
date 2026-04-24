@@ -3,7 +3,10 @@ const mongoose = require('mongoose');
 const projectSchema = new mongoose.Schema({
     projectName: {
         type: String,
-        required: [true, 'Project name is required'],
+        // required: function () {
+        //     return this.status !== "draft"; // ✅ only required if NOT draft
+        // },
+        required: true,
         trim: true,
     },
     description: {
