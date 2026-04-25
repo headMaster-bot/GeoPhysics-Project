@@ -96,8 +96,13 @@ const surveySchema = new mongoose.Schema({
     },
     status: {
         type: String,
-        enum: ['active','draft', 'completed'],
+        enum: ['active', 'draft', 'completed'],
         default: 'active',
+    },
+    type: {
+        type: String,
+        enum: ["survey"],
+        default: "survey",
     },
 }, {
     timestamps: true,

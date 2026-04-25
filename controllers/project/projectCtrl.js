@@ -287,6 +287,115 @@ const getDraftCtrl = async (req, res) => {
   }
 };
 
+// const saveCompletedCtrl = async (req, res) => {
+//     console.log("BODY:", req.params.id);
+
+//   try {
+
+//     const projectId = await Project.findById(req.params.id)
+//     if (!projectId) {
+//         return res.json({
+//             status: "Failed",
+//             message: "Project Id not found",
+//         })
+//     }
+
+//     // ✅ Validate ID
+//     // if (!surveyId) {
+//     //   return res.status(400).json({
+//     //     status: "error",
+//     //     message: "Survey ID is required",
+//     //   });
+//     // }
+
+//     // ✅ FIRST: find survey
+//     // const existingSurvey = await Survey.findById(surveyId);
+
+//     // if (!existingSurvey) {
+//     //   return res.status(404).json({
+//     //     status: "error",
+//     //     message: "Survey not found",
+//     //   });
+//     // }
+
+//     // ✅ BLOCK if already completed (CHECK BEFORE UPDATE)
+//     if (projectId.status === "completed") {
+//       return res.status(400).json({
+//         status: "success",
+//         message: "Project already completed, you can not edit this project",
+//       });
+//     }
+
+//     // ✅ NOW update
+//     const updatedProject = await Project.findByIdAndUpdate(
+//       projectId,
+//       { status: "completed" },
+//       { returnDocument: "after" } // ✅ IMPORTANT
+//     );
+
+//     return res.status(200).json({
+//       status: "success",
+//       message: "Project completed successfully",
+//       project: updatedProject,
+//     });
+
+//   } catch (error) {
+//     console.error("Save completed error:", error);
+
+//     return res.status(500).json({
+//       status: "error",
+//       message: "Server error",
+//     });
+//   }
+// };
+const saveCompletedCtrl = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    console.log("PROJECT ID:", id);
+
+    // ✅ Find project first
+    const existingProject = await Project.findById(id);
+
+    if (!existingProject) {
+      return res.status(404).json({
+        status: "error",
+        message: "Project not found",
+      });
+    }
+
+    // ✅ Block if already completed
+    if (existingProject.status === "completed") {
+      return res.status(400).json({
+        status: "error",
+        message: "Project already completed, you cannot edit it",
+      });
+    }
+
+    // ✅ Update using ID (NOT document)
+    const updatedProject = await Project.findByIdAndUpdate(
+      id,
+      { status: "completed" },
+      { returnDocument: "after" } // ✅ correct option
+    );
+
+    return res.status(200).json({
+      status: "success",
+      message: "Project completed successfully",
+      project: updatedProject,
+    });
+
+  } catch (error) {
+    console.error("Save completed error:", error);
+
+    return res.status(500).json({
+      status: "error",
+      message: "Server error",
+    });
+  }
+};
+
+
 
 // module.exports = saveDraftCtrl;
 
@@ -299,4 +408,5 @@ module.exports = {
   saveDraftCtrl,
   DraftsCtrl,
   getDraftCtrl,
+  saveCompletedCtrl,
 };

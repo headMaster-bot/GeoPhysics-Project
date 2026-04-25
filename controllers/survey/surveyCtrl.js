@@ -389,93 +389,245 @@ const updateSurveyCtrl = async (req, res) => {
 
 // status update
 const updateSurveyStatusCtrl = async (req, res) => {
-  try {
-    const { surveyId, status } = req.body;
+    try {
+        const { surveyId, status } = req.body;
 
-    const validStatuses = ["in_progress", "draft", "completed"];
+        const validStatuses = ["in_progress", "draft", "completed"];
 
-    if (!validStatuses.includes(status)) {
-      return res.status(400).json({
-        message: "Invalid status",
-      });
+        if (!validStatuses.includes(status)) {
+            return res.status(400).json({
+                message: "Invalid status",
+            });
+        }
+
+        const survey = await Survey.findByIdAndUpdate(
+            surveyId,
+            { status },
+            { returnDocument: "after" }
+        );
+
+        res.json({
+            status: "Success",
+            data: survey,
+        });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
     }
-
-    const survey = await Survey.findByIdAndUpdate(
-      surveyId,
-      { status },
-      { returnDocument: "after" }
-    );
-
-    res.json({
-      status: "Success",
-      data: survey,
-    });
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
 };
 
 // save to draft
 const saveDraftCtrl = async (req, res) => {
     console.log(req.userAuth, "save");
-    
-  const { surveyId, ...rest } = req.body;
 
-  let survey;
+    const { surveyId, ...rest } = req.body;
 
-  if (surveyId) {
-    survey = await Survey.findByIdAndUpdate(
-      surveyId,
-      { ...rest, status: "draft" },
-      { new: true }
-    );
-  } else {
-    survey = await Survey.create({
-      ...rest,
-      status: "draft",
-      user: req.userAuth,
-    });
-  }
+    let survey;
 
-  res.json(survey);
+    if (surveyId) {
+        survey = await Survey.findByIdAndUpdate(
+            surveyId,
+            { ...rest, status: "draft" },
+            { new: true }
+        );
+    } else {
+        survey = await Survey.create({
+            ...rest,
+            status: "draft",
+            user: req.userAuth,
+        });
+    }
+
+    res.json(survey);
 };
+
+// const saveDraftCtrl = async (req, res) => {
+//   try {
+//     console.log(req.userAuth, "save");
+
+//     const { surveyId, status = "draft", ...rest } = req.body;
+
+//     // ✅ Allow 3 statuses now
+//     const allowedStatus = ["active", "draft", "completed"];
+
+//     if (!allowedStatus.includes(status)) {
+//       return res.status(400).json({
+//         message: "Invalid status value",
+//       });
+//     }
+
+//     let survey;
+
+//     if (surveyId) {
+//       survey = await Survey.findByIdAndUpdate(
+//         surveyId,
+//         {
+//           ...rest,
+//           status, // dynamic: draft | active | completed
+//         },
+//         { new: true }
+//       );
+//     } else {
+//       survey = await Survey.create({
+//         ...rest,
+//         status,
+//         user: req.userAuth,
+//       });
+//     }
+
+//     res.json(survey);
+//   } catch (error) {
+//     res.status(500).json({
+//       message: error.message,
+//     });
+//   }
+// };
 
 // get draft
 const DraftsCtrl = async (req, res) => {
-  const { status } = req.query;
+    const { status } = req.query;
 
-  const surveys = await Survey.find({
-    user: req.userAuth,
-    ...(status && { status }),
-  }).sort({ createdAt: -1 });
+    const surveys = await Survey.find({
+        user: req.userAuth,
+        ...(status && { status }),
+    }).sort({ createdAt: -1 });
 
-  res.json(surveys);
+    res.json(surveys);
 };
 
 // controllers/survey/getDraftCtrl.js
 const getDraftCtrl = async (req, res) => {
+    try {
+        const { surveyId } = req.params;
+
+        const survey = await Survey.findById(surveyId);
+
+        if (!survey) {
+            return res.status(404).json({ message: "Survey not found" });
+        }
+
+        res.json({
+            status: "success",
+            survey,
+        });
+    } catch (error) {
+        res.status(500).json({
+            status: "error",
+            message: error.message,
+        });
+    }
+};
+
+// complete survey
+// const saveCompletedCtrl = async (req, res) => {
+//     console.log("BODY:", req.params.id);
+
+//   try {
+
+//     const surveyId = await Survey.findById(req.params.id)
+//     if (!surveyId) {
+//         return res.json({
+//             status: "Failed",
+//             message: "Survey Id not found",
+//         })
+//     }
+
+//     // ✅ Validate ID
+//     // if (!surveyId) {
+//     //   return res.status(400).json({
+//     //     status: "error",
+//     //     message: "Survey ID is required",
+//     //   });
+//     // }
+
+//     // ✅ FIRST: find survey
+//     // const existingSurvey = await Survey.findById(surveyId);
+
+//     // if (!existingSurvey) {
+//     //   return res.status(404).json({
+//     //     status: "error",
+//     //     message: "Survey not found",
+//     //   });
+//     // }
+
+//     // ✅ BLOCK if already completed (CHECK BEFORE UPDATE)
+//     if (surveyId.status === "completed") {
+//       return res.status(400).json({
+//         status: "success",
+//         message: "Survey already completed, you can not edit this survey",
+//       });
+//     }
+
+//     // ✅ NOW update
+//     const updatedSurvey = await Survey.findByIdAndUpdate(
+//       surveyId,
+//       { status: "completed" },
+//       { returnDocument: "after" } // ✅ IMPORTANT
+//     );
+
+//     return res.status(200).json({
+//       status: "success",
+//       message: "Survey completed successfully",
+//       survey: updatedSurvey,
+//     });
+
+//   } catch (error) {
+//     console.error("Save completed error:", error);
+
+//     return res.status(500).json({
+//       status: "error",
+//       message: "Server error",
+//     });
+//   }
+// };
+
+const saveCompletedCtrl = async (req, res) => {
   try {
-    const { surveyId } = req.params;
+    const { id } = req.params;
 
-    const survey = await Survey.findById(surveyId);
+    console.log("Survey ID:", id);
 
-    if (!survey) {
-      return res.status(404).json({ message: "Survey not found" });
+    // ✅ Find Survey first
+    const existingSurvey = await Survey.findById(id);
+
+    if (!existingSurvey) {
+      return res.status(404).json({
+        status: "error",
+        message: "Survey not found",
+      });
     }
 
-    res.json({
+    // ✅ Block if already completed
+    if (existingSurvey.status === "completed") {
+      return res.status(400).json({
+        status: "error",
+        message: "Survey already completed, you cannot edit it",
+      });
+    }
+
+    // ✅ Update using ID (NOT document)
+    const updatedSurvey = await Survey.findByIdAndUpdate(
+      id,
+      { status: "completed" },
+      { returnDocument: "after" } // ✅ correct option
+    );
+
+    return res.status(200).json({
       status: "success",
-      survey,
+      message: "Survey completed successfully",
+      survey: updatedSurvey,
     });
+
   } catch (error) {
-    res.status(500).json({
+    console.error("Save completed error:", error);
+
+    return res.status(500).json({
       status: "error",
-      message: error.message,
+      message: "Server error",
     });
   }
 };
 
-module.exports = getDraftCtrl;
+// module.exports = getDraftCtrl;
 
 const deleteSurveyCtrl = async (req, res) => {
     try {
@@ -525,4 +677,5 @@ module.exports = {
     saveDraftCtrl,
     DraftsCtrl,
     getDraftCtrl,
+    saveCompletedCtrl,
 };
