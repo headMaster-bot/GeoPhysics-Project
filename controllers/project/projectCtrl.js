@@ -395,6 +395,19 @@ const saveCompletedCtrl = async (req, res) => {
   }
 };
 
+// all complete project
+// get all draft by query
+// const completeProjectDraftsCtrl = async (req, res) => {
+//   const { status } = req.query;
+
+//   const projects = await Project.find({
+//     user: req.userAuth,
+//     ...(status && { status }),
+//   }).sort({ createdAt: -1 });
+
+//   res.json(projects);
+// };
+
 
 
 // module.exports = saveDraftCtrl;
