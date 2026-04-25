@@ -195,26 +195,6 @@ const updateProjectCtrl = async (req, res) => {
   }
 };
 
-const deleteProjectCtrl = async (req, res) => {
-  try {
-    const project = await Project.findByIdAndDelete(req.params.id);
-    if (!project) {
-      return res.status(404).json({
-        status: "Failed",
-        message: 'Project not found'
-      });
-    }
-    res.json({
-      status: "Success",
-      message: 'Project deleted successfully'
-    });
-  } catch (error) {
-    res.status(500).json({
-      message: error.message
-    });
-  }
-};
-
 // saves project to draft
 // saveDraftCtrl.js
 
@@ -395,6 +375,28 @@ const saveCompletedCtrl = async (req, res) => {
   }
 };
 
+// get both drafts and complete status once
+const draftAndCompleteCtrl = async (req, res) => {
+  try {
+    const { status } = req.query;
+
+    let filter = {
+      user: req.userAuth,
+    };
+
+    if (status) {
+      const statuses = status.split(","); 
+      filter.status = { $in: statuses };
+    }
+
+    const projects = await Project.find(filter).sort({ createdAt: -1 });
+
+    res.json(projects);
+  } catch (error) {
+
+    res.status(500).json({ message: error.message });
+  }
+};
 // all complete project
 // get all draft by query
 // const completeProjectDraftsCtrl = async (req, res) => {
@@ -407,6 +409,27 @@ const saveCompletedCtrl = async (req, res) => {
 
 //   res.json(projects);
 // };
+
+// delete project
+const deleteProjectCtrl = async (req, res) => {
+  try {
+    const project = await Project.findByIdAndDelete(req.params.id);
+    if (!project) {
+      return res.status(404).json({
+        status: "Failed",
+        message: 'Project not found'
+      });
+    }
+    res.json({
+      status: "Success",
+      message: 'Project deleted successfully'
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: error.message
+    });
+  }
+};
 
 
 
@@ -422,4 +445,5 @@ module.exports = {
   DraftsCtrl,
   getDraftCtrl,
   saveCompletedCtrl,
+  draftAndCompleteCtrl,
 };

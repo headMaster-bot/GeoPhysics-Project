@@ -192,7 +192,7 @@ const updateUserProfileCtrl = async (req, res) => {
         });
     }
 }
-
+// delete account
 const deleteUserAccountCtrl = async (req, res) => {
     try {
         // find the user to  be deleted
@@ -220,6 +220,31 @@ const deleteUserAccountCtrl = async (req, res) => {
     }
 }
 
+// delete projects
+const deleteAllProjectsCtrl = async (req, res) => {
+  try {
+    const userId = req.userAuth;
+
+    await Project.deleteMany({ user: userId });
+    await Epic.deleteMany({ user: userId });
+    await Story.deleteMany({ user: userId });
+    await Sprint.deleteMany({ user: userId });
+    await Survey.deleteMany({ user: userId });
+
+    res.status(200).json({
+      status: "Success",
+      message: "All projects and related data deleted",
+    });
+  } catch (error) {
+    res.status(500).json({
+      status: "Error",
+      message: error.message,
+    });
+  }
+};
+
+
+
 
 module.exports = {
     userRegisterCtrl,
@@ -227,5 +252,6 @@ module.exports = {
     usersCtrl,
     userProfileCtrl,
     updateUserProfileCtrl,
-    deleteUserAccountCtrl
+    deleteUserAccountCtrl,
+    deleteAllProjectsCtrl,
 }

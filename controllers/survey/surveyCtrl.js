@@ -482,7 +482,7 @@ const saveDraftCtrl = async (req, res) => {
 //   }
 // };
 
-// get draft
+// get status
 const DraftsCtrl = async (req, res) => {
     const { status } = req.query;
 
@@ -627,6 +627,28 @@ const saveCompletedCtrl = async (req, res) => {
   }
 };
 
+// get both drafts and complete status once
+const completesCtrl = async (req, res) => {
+  try {
+    const { status } = req.query;
+
+    let filter = {
+      user: req.userAuth,
+    };
+
+    if (status) {
+      const statuses = status.split(","); 
+      filter.status = { $in: statuses };
+    }
+
+    const surveys = await Survey.find(filter).sort({ createdAt: -1 });
+
+    res.json(surveys);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 // module.exports = getDraftCtrl;
 
 const deleteSurveyCtrl = async (req, res) => {
@@ -678,4 +700,5 @@ module.exports = {
     DraftsCtrl,
     getDraftCtrl,
     saveCompletedCtrl,
+    completesCtrl,
 };

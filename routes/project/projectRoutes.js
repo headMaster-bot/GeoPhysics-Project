@@ -4,7 +4,8 @@ const { createProjectCtrl, getProjectsCtrl, getProjectCtrl,
     getDraftCtrl,
     saveDraftCtrl,
     DraftsCtrl,
-    saveCompletedCtrl
+    saveCompletedCtrl,
+    draftAndCompleteCtrl
 } = require('../../controllers/project/projectCtrl');
 const isLogIn = require('../../middlewares/isLogIn');
 const projectRouter = express.Router();
@@ -25,6 +26,8 @@ projectRouter.get("/gets-draft", isLogIn, DraftsCtrl);
 projectRouter.get("/draft/:projectId", isLogIn, getDraftCtrl);
 // survey completed
 projectRouter.put("/completed/:id", isLogIn, saveCompletedCtrl);
+// both
+projectRouter.get("/", isLogIn, draftAndCompleteCtrl);
 
 // delete project
 projectRouter.delete("/delete/:id", isLogIn, deleteProjectCtrl);

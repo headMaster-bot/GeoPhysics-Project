@@ -16,7 +16,6 @@ const isLogIn = async (req, res, next) => {
     else {
         next();
     }
-
 }
 
 module.exports = isLogIn;
