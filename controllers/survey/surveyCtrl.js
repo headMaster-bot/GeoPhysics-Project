@@ -392,7 +392,7 @@ const updateSurveyStatusCtrl = async (req, res) => {
     try {
         const { surveyId, status } = req.body;
 
-        const validStatuses = ["in_progress", "draft", "completed"];
+        const validStatuses = ["active", "draft", "completed"];
 
         if (!validStatuses.includes(status)) {
             return res.status(400).json({
