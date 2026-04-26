@@ -51,6 +51,8 @@ const User = require("../../model/User/user");
     try {
         const { title, description, epicId, priority, points } = req.body;
         const storyExists = await Story.findOne({ title });
+        // find user
+        const userFound = await User.findById(req.userAuth)
         if (storyExists) {
         return res.status(400).json({
             status: "Failed",
@@ -72,6 +74,8 @@ const User = require("../../model/User/user");
         await Epic.findByIdAndUpdate(epicId, {
         $push: { stories: story._id},
         });
+        userFound.stories.push(story);
+        await userFound.save();
         console.log(story, "story");
         
 
