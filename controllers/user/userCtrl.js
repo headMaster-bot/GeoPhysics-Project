@@ -37,7 +37,7 @@ const userRegisterCtrl = async (req, res) => {
                 : 'Geophysics';
 
         // Optional safety check (recommended)
-        const allowedRoles = ['Geophysics', 'Geologist', 'Engineer'];
+        const allowedRoles = ['Geophysicist', 'Geologist', 'Engineer'];
 
         if (!allowedRoles.includes(formattedRole)) {
             return res.status(400).json({
@@ -127,28 +127,72 @@ const usersCtrl = async (req, res) => {
 // @desc    user profile controller
 // @route   GET /api/v1/users/profile/:id
 // @access  Public
-const userProfileCtrl = async (req, res) => {
-    // console.log(req.userAuth, "ctrl");
+// const userProfileCtrl = async (req, res) => {
+//     // console.log(req.userAuth, "ctrl");
 
+//     try {
+//         const user = await User.findById(req.userAuth).populate("stories");
+//         // console.log(user);
+//         // const token = getTokenFromHeader(req);
+//         // console.log(token, "123");
+//         const projects = await Project.find({
+//             user: req.userAuth,
+//         }).sort({ createdAt: -1 });
+
+//         const surveys = await Survey.find({
+//             user: req.userAuth,
+//         }).sort({ createdAt: -1 });
+
+//         res.json({
+//             status: "success",
+//             message: {
+//                 ...user._doc,
+//                 projects,
+//                 survey: surveys,
+//             },
+//         });
+//         res.json({
+//             status: "success",
+//             message: user,
+//         },
+//             {
+//                 new: true,
+//             }
+//         )
+//     } catch (error) {
+//         res.json({
+//             message: error.message
+//         })
+//     }
+// }
+
+const userProfileCtrl = async (req, res) => {
     try {
-        const user = await User.findById(req.userAuth).populate('projects').populate('survey').populate("stories");
-        // console.log(user);
-        // const token = getTokenFromHeader(req);
-        // console.log(token, "123");
-        res.json({
+        const user = await User.findById(req.userAuth).populate("stories");
+
+        const projects = await Project.find({
+            user: req.userAuth,
+        }).sort({ createdAt: -1 });
+
+        const surveys = await Survey.find({
+            user: req.userAuth,
+        }).sort({ createdAt: -1 });
+
+        return res.json({
             status: "success",
-            message: user,
-        },
-            {
-                new: true,
-            }
-        )
+            message: {
+                ...user._doc,
+                projects,
+                survey: surveys,
+            },
+        });
+
     } catch (error) {
-        res.json({
+        return res.status(500).json({
             message: error.message
-        })
+        });
     }
-}
+};
 
 // update user profile controller
 // @desc    update user profile controller
@@ -222,25 +266,25 @@ const deleteUserAccountCtrl = async (req, res) => {
 
 // delete projects
 const deleteAllProjectsCtrl = async (req, res) => {
-  try {
-    const userId = req.userAuth;
+    try {
+        const userId = req.userAuth;
 
-    await Project.deleteMany({ user: userId });
-    await Epic.deleteMany({ user: userId });
-    await Story.deleteMany({ user: userId });
-    await Sprint.deleteMany({ user: userId });
-    await Survey.deleteMany({ user: userId });
+        await Project.deleteMany({ user: userId });
+        await Epic.deleteMany({ user: userId });
+        await Story.deleteMany({ user: userId });
+        await Sprint.deleteMany({ user: userId });
+        await Survey.deleteMany({ user: userId });
 
-    res.status(200).json({
-      status: "Success",
-      message: "All projects and related data deleted",
-    });
-  } catch (error) {
-    res.status(500).json({
-      status: "Error",
-      message: error.message,
-    });
-  }
+        res.status(200).json({
+            status: "Success",
+            message: "All projects and related data deleted",
+        });
+    } catch (error) {
+        res.status(500).json({
+            status: "Error",
+            message: error.message,
+        });
+    }
 };
 
 
