@@ -7,12 +7,12 @@ const {
     deleteSurveyCtrl,
     updateSurveyStatusCtrl,
     saveDraftCtrl,
-    getSurveysDraftCtrl,
+    // getSurveysDraftCtrl,
     DraftsCtrl,
     getDraftCtrl,
-    saveCompletedtrl,
+    // saveCompletedtrl,
     saveCompletedCtrl,
-    completesCtrl,
+    draftsAndCompletesCtrl,
 } = require('../../controllers/survey/surveyCtrl');
 const isLogIn = require('../../middlewares/isLogIn');
 
@@ -40,7 +40,7 @@ surveyRouter.get("/gets-status", isLogIn, DraftsCtrl);
 // draft by id
 surveyRouter.get("/draft/:surveyId", isLogIn, getDraftCtrl);
 // both
-surveyRouter.get("/", isLogIn, completesCtrl);
+surveyRouter.get("/", isLogIn, draftsAndCompletesCtrl);
 
 // Delete a survey
 surveyRouter.delete("/:id", isLogIn, deleteSurveyCtrl);

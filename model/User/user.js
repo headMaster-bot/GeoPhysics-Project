@@ -41,8 +41,8 @@ const userSchema = new mongoose.Schema({
     },
     role: {
         type: String,
-        enum: [ 'Geophysics', 'Geologist', 'Engineer'],
-        default: 'Geophysics',
+        enum: [ 'Geophysicist', 'Geologist', 'Engineer'],
+        default: 'Geophysicist',
         // required: true,
     },
     // geophysics-specific profile (optional)

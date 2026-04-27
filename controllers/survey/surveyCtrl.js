@@ -124,168 +124,6 @@ const getSurveyCtrl = async (req, res) => {
     }
 };
 
-// const updateSurveyCtrl = async (req, res) => {
-//     try {
-//         const {
-//             surveyName,
-//             surveyObjective,
-//             geologicalSetting,
-//             minDepth,
-//             maxDepth,
-//             ...rest
-//         } = req.body;
-
-//         // Debug logging
-//         console.log('=== Update Survey Controller ===');
-//         console.log('Request body:', req.body);
-//         console.log('Parsed values:');
-//         console.log('  surveyObjective:', `"${surveyObjective}"`, `(length: ${surveyObjective?.length})`);
-//         console.log('  geologicalSetting:', `"${geologicalSetting}"`, `(length: ${geologicalSetting?.length})`);
-//         console.log('  minDepth:', minDepth);
-//         console.log('  maxDepth:', maxDepth);
-
-//         const survey = await Survey.findById(req.params.id);
-
-//         if (!survey) {
-//             return res.status(404).json({ message: "Survey not found" });
-//         }
-
-//         if (survey.user.toString() !== req.userAuth) {
-//             return res.status(403).json({ message: "Not authorized" });
-//         }
-
-//         // Use provided surveyObjective or fallback to existing survey objective
-//         const objectiveForRecommendation = surveyObjective || survey.surveyObjective;
-
-//         console.log('Objective for recommendation:', objectiveForRecommendation);
-
-//         const recommendedMethods = getRecommendedMethods({
-//             surveyObjective: objectiveForRecommendation,
-//             geologicalSetting,
-//             minDepth: minDepth,
-//             maxDepth: maxDepth
-//         });
-
-//         const updatedSurvey = await Survey.findByIdAndUpdate(
-//             req.params.id,
-//             {
-//                 surveyName,
-//                 surveyObjective,
-//                 geologicalSetting,
-//                 minDepth,
-//                 maxDepth,
-//                 ...rest,
-//                 recommendedMethods
-//             },
-//             {
-//                 returnDocument: "after",
-//                 runValidators: true
-//             }
-//         );
-
-//         res.json({
-//             status: "success",
-//             survey: updatedSurvey,
-//             recommendedMethods: recommendedMethods.length
-//                 ? recommendedMethods
-//                 : ["No method matches the selected depth"]
-//         });
-
-//     } catch (error) {
-//         res.status(500).json({ message: error.message });
-//     }
-// };
-
-// @desc    Delete a survey
-// @route   DELETE /api/v1/surveys/:id
-// @access  Private
-
-// const getRecommendedMethods = require("../services/recommendationEngine");
-
-// const updateSurveyCtrl = async (req, res) => {
-//   try {
-//     const {
-//       surveyName,
-//       surveyObjective,
-//       geologicalSetting,
-//       latitude,
-//       longitude,
-//       vegetationDensity,
-//       ambientNoise,
-//       targetDepthRange,
-//       layoutPattern,
-//       stationSpacing,
-//       lineSpacing,
-//       minDepth,
-//       maxDepth
-//     } = req.body;
-
-//     const survey = await Survey.findById(req.params.id);
-
-//     if (!survey) {
-//       return res.status(404).json({
-//         status: "error",
-//         message: "Survey not found"
-//       });
-//     }
-
-//     if (survey.user.toString() !== req.userAuth) {
-//       return res.status(403).json({
-//         status: "error",
-//         message: "Not authorized"
-//       });
-//     }
-
-//     // 🔥 Engine Call (THIS IS THE MAGIC)
-//     const recommendedMethods = getRecommendedMethods({
-//       surveyObjective,
-//       geologicalSetting,
-//       minDepth,
-//       maxDepth
-//     });
-
-//     const updatedSurvey = await Survey.findByIdAndUpdate(
-//       req.params.id,
-//       {
-//         surveyName,
-//         surveyObjective,
-//         geologicalSetting,
-//         latitude,
-//         longitude,
-//         vegetationDensity,
-//         ambientNoise,
-//         targetDepthRange,
-//         layoutPattern,
-//         stationSpacing,
-//         lineSpacing,
-//         minDepth,
-//         maxDepth,
-//         recommendedMethods
-//       },
-//       {
-//         returnDocument: "after",
-//         runValidators: true
-//       }
-//     );
-
-//     res.json({
-//       status: "success",
-//       survey: updatedSurvey,
-//       recommendedMethods: recommendedMethods.length
-//         ? recommendedMethods
-//         : ["No method matches the depth range"]
-//     });
-
-//   } catch (error) {
-//     res.status(500).json({
-//       status: "error",
-//       message: error.message
-//     });
-//   }
-// };
-
-// const getRecommendedMethods = require("../services/recommendationEngine");
-
 const updateSurveyCtrl = async (req, res) => {
     try {
         const {
@@ -440,49 +278,7 @@ const saveDraftCtrl = async (req, res) => {
     res.json(survey);
 };
 
-// const saveDraftCtrl = async (req, res) => {
-//   try {
-//     console.log(req.userAuth, "save");
 
-//     const { surveyId, status = "draft", ...rest } = req.body;
-
-//     // ✅ Allow 3 statuses now
-//     const allowedStatus = ["active", "draft", "completed"];
-
-//     if (!allowedStatus.includes(status)) {
-//       return res.status(400).json({
-//         message: "Invalid status value",
-//       });
-//     }
-
-//     let survey;
-
-//     if (surveyId) {
-//       survey = await Survey.findByIdAndUpdate(
-//         surveyId,
-//         {
-//           ...rest,
-//           status, // dynamic: draft | active | completed
-//         },
-//         { new: true }
-//       );
-//     } else {
-//       survey = await Survey.create({
-//         ...rest,
-//         status,
-//         user: req.userAuth,
-//       });
-//     }
-
-//     res.json(survey);
-//   } catch (error) {
-//     res.status(500).json({
-//       message: error.message,
-//     });
-//   }
-// };
-
-// get status
 const DraftsCtrl = async (req, res) => {
     const { status } = req.query;
 
@@ -628,7 +424,7 @@ const saveCompletedCtrl = async (req, res) => {
 };
 
 // get both drafts and complete status once
-const completesCtrl = async (req, res) => {
+const draftsAndCompletesCtrl = async (req, res) => {
   try {
     const { status } = req.query;
 
@@ -649,7 +445,6 @@ const completesCtrl = async (req, res) => {
   }
 };
 
-// module.exports = getDraftCtrl;
 
 const deleteSurveyCtrl = async (req, res) => {
     try {
@@ -700,5 +495,5 @@ module.exports = {
     DraftsCtrl,
     getDraftCtrl,
     saveCompletedCtrl,
-    completesCtrl,
+    draftsAndCompletesCtrl,
 };
