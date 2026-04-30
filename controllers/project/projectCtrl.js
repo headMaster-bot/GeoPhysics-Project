@@ -16,12 +16,12 @@ const createProjectCtrl = async (req, res) => {
 
     const projectExists = await Project.findOne({ projectName });
 
-    if (projectExists) {
-      return res.status(400).json({
-        status: "Failed",
-        message: "Project already exists"
-      });
-    }
+    // if (projectExists) {
+    //   return res.status(400).json({
+    //     status: "Failed",
+    //     message: "Project already exists"
+    //   });
+    // }
 
     // ✅ Create project
     const project = await Project.create({
