@@ -168,7 +168,10 @@ const usersCtrl = async (req, res) => {
 
 const userProfileCtrl = async (req, res) => {
     try {
-        const user = await User.findById(req.userAuth).populate("stories");
+        const user = await User.findById(req.userAuth)
+            .populate("stories")
+            .populate("projects")
+            .populate("survey");
 
         const projects = await Project.find({
             user: req.userAuth,
