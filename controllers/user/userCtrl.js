@@ -184,7 +184,8 @@ const userProfileCtrl = async (req, res) => {
         return res.json({
             status: "success",
             message: {
-                ...user._doc,
+                // ...user._doc,
+                ...user.toObject(),
                 projects,
                 survey: surveys,
             },

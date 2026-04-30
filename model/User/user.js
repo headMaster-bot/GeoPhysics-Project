@@ -95,42 +95,6 @@ userSchema.virtual("totalPoints").get(function () {
     return this.stories.reduce((total, story) => total + (story.points || 0), 0);
 });
 
-// projects duration virtual
-// userSchema.virtual("totalProjectDuration").get(function () {
-//     if (!Array.isArray(this.projects) || this.projects.length === 0) {
-//         return 0;
-//     }
-
-//     return this.projects.reduce((total, project) => {
-//         return total + (project?.sprintDuration ?? 0);
-//     }, 0);
-// });
-
-// userSchema.virtual("totalProjectDuration").get(function () {
-//     if (!Array.isArray(this.projects) || this.projects.length === 0) {
-//         return "0 days";
-//     }
-
-//     const totalDays = this.projects.reduce((total, project) => {
-//         if (!project?.startDate || !project?.endDate) return total;
-
-//         const ms = new Date(project.endDate) - new Date(project.startDate);
-//         const days = ms / (1000 * 60 * 60 * 24);
-
-//         return total + days;
-//     }, 0);
-
-//     const roundedDays = Math.floor(totalDays);
-
-//     // 🔥 Your logic here
-//     if (roundedDays < 7) {
-//         return `${roundedDays} day${roundedDays !== 1 ? "s" : ""}`;
-//     }
-
-//     const weeks = Math.floor(roundedDays / 7);
-
-//     return `${weeks} week${weeks !== 1 ? "s" : ""}`;
-// });
 
 userSchema.virtual("totalProjectDuration").get(function () {
     if (!Array.isArray(this.projects) || this.projects.length === 0) {
@@ -154,15 +118,6 @@ userSchema.virtual("totalProjectDuration").get(function () {
     return `${weeks} week${weeks !== 1 ? "s" : ""}`;
 });
 
-// ✅ Virtual for isActive
-// userSchema.virtual("isActive").get(function () {
-//     // A user is considered active if they have at least one project
-//     return this.projectCount && this.projects.length > 0;
-// })
-
-// userSchema.virtual("isActive").get(function () {
-//     return this.projects && this.projects.length > 0;
-// });
 
 userSchema.virtual("isActive").get(function () {
     return this.projects ? this.projects.length : 0;
