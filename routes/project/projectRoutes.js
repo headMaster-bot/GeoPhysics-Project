@@ -13,7 +13,7 @@ const projectRouter = express.Router();
 // create project
 projectRouter.post("/create-project", isLogIn, createProjectCtrl);
 // get all projects for user
-projectRouter.get("/all-projects", getProjectsCtrl);
+projectRouter.get("/all-projects", isLogIn, getProjectsCtrl);
 // get single project
 projectRouter.get("/single-project/:id", isLogIn, getProjectCtrl);
 // update project

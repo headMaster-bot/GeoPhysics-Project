@@ -55,6 +55,10 @@ const projectSchema = new mongoose.Schema({
         enum: ['active', 'draft', 'completed'],
         default: 'active',
     },
+    // stories: [{
+    //     type: mongoose.Schema.Types.ObjectId,
+    //     ref: "Story"
+    // }],
     type: {
         type: String,
         enum: ["project"],
@@ -62,6 +66,8 @@ const projectSchema = new mongoose.Schema({
     },
 }, {
     timestamps: true,
+    toJSON: { virtuals: true },   // ✅ IMPORTANT
+    toObject: { virtuals: true },
 });
 
 module.exports = mongoose.model('Project', projectSchema);

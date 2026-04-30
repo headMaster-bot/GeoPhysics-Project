@@ -1,4 +1,5 @@
 const Epic = require("../../model/EPic/Epic");
+const Project = require("../../model/Project/Project");
 const Story = require("../../model/Story/Story");
 const User = require("../../model/User/user");
 
@@ -9,7 +10,7 @@ const User = require("../../model/User/user");
 //         // find user
 //         const userFound = await User.findById(req.userAuth);
 //         // console.log(userFound, "User");
-        
+
 //         if (!userFound) {
 //             return res.status(404).json({
 //                 status: "Failed",
@@ -46,79 +47,90 @@ const User = require("../../model/User/user");
 
 // all story
 
-    const createStoryCtrl = async (req, res) => {
-        // console.log("REQ BODY:", req.body);
-    try {
-        const { title, description, epicId, priority, points } = req.body;
-        const storyExists = await Story.findOne({ title });
-        // find user
-        const userFound = await User.findById(req.userAuth)
-        if (storyExists) {
-        return res.status(400).json({
-            status: "Failed",
-            message: "Story with this title already exists",
-        });
-        }
+const createStoryCtrl = async (req, res) => {
+  // console.log("REQ BODY:", req.body);
+  console.log(req.userAuth, "story user");
 
-        // 1. Create story
-        const story = await Story.create({
-        title,
-        description,
-        epicId,
-        priority,
-        points,
-        user: req.userAuth,
-        });
-
-        // 2. Push story into Epic
-        await Epic.findByIdAndUpdate(epicId, {
-        $push: { stories: story._id},
-        });
-        userFound.stories.push(story);
-        await userFound.save();
-        console.log(story, "story");
-        
-
-        res.json({
-        status: "Success",
-        data: story,
-        });
-    } catch (error) {
-        console.log("CREATE STORY ERROR:", error);
-        res.status(500).json({ message: error.message });
+  try {
+    const { title, description, epicId, priority, points, projectId } = req.body;
+    const storyExists = await Story.findOne({ title });
+    // find user
+    // const userFound = await User.findById(req.userAuth)
+    // console.log("USER FOUND:", userFound?._id);
+    if (storyExists) {
+      return res.status(400).json({
+        status: "Failed",
+        message: "Story with this title already exists",
+      });
     }
-    }; 
+
+    // 1. Create story
+    const story = await Story.create({
+      title,
+      description,
+      epicId,
+      projectId,
+      priority,
+      points,
+      user: req.userAuth,
+    });
+
+    // 2. Push story into Epic
+    await Epic.findByIdAndUpdate(epicId, {
+      $push: { stories: story._id },
+    });
+    await Project.findByIdAndUpdate(projectId, {
+      $push: { stories: story._id },
+    });
+    // push to user stories array
+    // userFound.stories.push(story);
+
+    // console.log( userFound.stories.push(story._id), "push");
+
+    // await userFound.save();
+    console.log(story, "story");
+
+
+    res.json({
+      status: "Success",
+      data: story,
+    });
+  } catch (error) {
+    console.log("CREATE STORY ERROR:", error);
+    res.status(500).json({ message: error.message });
+  }
+};
 
 const getAllStoryCtrl = async (req, res) => {
-    try {
-        const stories = await Story.find();
-        res.json({
-            status: "Success",
-            message: stories,
-        })
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
+  try {
+    const stories = await Story.find();
+    res.json({
+      status: "Success",
+      message: stories,
+    })
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
 }
 
 // get single story
 
 const getStoryCtrl = async (req, res) => {
-    try {
-        const story = await Story.findById(req.params.id);
-        if (!story) {
-            return res.json({
-                status: "Failed",
-                message: "Story not found",
-            });
-        }
-        res.json({
-            status: "Success",
-            message: story,
-        })
-    } catch (error) {
-        res.json({ message: error.message });
+  try {
+    const story = await Story.findById(req.params.id);
+    if (!story) {
+      return res.json({
+        status: "Failed",
+        message: "Story not found",
+      });
     }
+    res.json({
+      status: "Success",
+      message: story,
+    })
+  } catch (error) {
+    res.json({ message: error.message });
+  }
 }
 
 const getStoriesByEpicCtrl = async (req, res) => {
@@ -128,7 +140,7 @@ const getStoriesByEpicCtrl = async (req, res) => {
 
     const stories = await Story.find({ epic: epicId });
     // console.log(stories, "Stories");
-    
+
 
     res.status(200).json({
       status: "Success",
@@ -143,35 +155,55 @@ const getStoriesByEpicCtrl = async (req, res) => {
   }
 };
 
+// const getStoriesByProjectCtrl = async (req, res) => {
+//   try {
+//     const { projectId } = req.params;
+
+//     // 1. Get all epics under this project
+//     const epics = await Epic.find({ project: projectId }).select("_id");
+
+//     const epicIds = epics.map((epic) => epic._id);
+
+//     // 2. Get all stories that belong to those epics
+//     const stories = await Story.find({
+//       epicId: { $in: epicIds },
+//     })
+//       .populate("epicId")
+//       .populate("user");
+
+//     res.json({
+//       status: "Success",
+//       data: stories,
+//     });
+//   } catch (error) {
+//     res.status(500).json({
+//       status: "Failed",
+//       message: error.message,
+//     });
+//   }
+// };
+
+// update story status
+
 const getStoriesByProjectCtrl = async (req, res) => {
+  console.log("PARAMS:", req.params);
+  console.log("PROJECT ID:", req.params.projectId);
   try {
     const { projectId } = req.params;
 
-    // 1. Get all epics under this project
-    const epics = await Epic.find({ project: projectId }).select("_id");
+    const stories = await Story.find({ projectId })
+      .populate("user")
+      .populate("epicId");
 
-    const epicIds = epics.map((epic) => epic._id);
-
-    // 2. Get all stories that belong to those epics
-    const stories = await Story.find({
-      epicId: { $in: epicIds },
-    })
-      .populate("epicId")
-      .populate("user");
-
-    res.json({
+    return res.json({
       status: "Success",
       data: stories,
     });
   } catch (error) {
-    res.status(500).json({
-      status: "Failed",
-      message: error.message,
-    });
+    return res.status(500).json({ message: error.message });
   }
 };
 
-// update story status
 const updateStoryStatusCtrl = async (req, res) => {
   try {
     const { storyId } = req.params;
@@ -209,10 +241,10 @@ const updateStoryStatusCtrl = async (req, res) => {
 };
 
 module.exports = {
-    createStoryCtrl, 
-    getAllStoryCtrl,
-    getStoryCtrl,
-    getStoriesByEpicCtrl,
-    getStoriesByProjectCtrl,
-    updateStoryStatusCtrl,
+  createStoryCtrl,
+  getAllStoryCtrl,
+  getStoryCtrl,
+  getStoriesByEpicCtrl,
+  getStoriesByProjectCtrl,
+  updateStoryStatusCtrl,
 }       

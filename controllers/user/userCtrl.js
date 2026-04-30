@@ -127,46 +127,10 @@ const usersCtrl = async (req, res) => {
 // @desc    user profile controller
 // @route   GET /api/v1/users/profile/:id
 // @access  Public
-// const userProfileCtrl = async (req, res) => {
-//     // console.log(req.userAuth, "ctrl");
-
-//     try {
-//         const user = await User.findById(req.userAuth).populate("stories");
-//         // console.log(user);
-//         // const token = getTokenFromHeader(req);
-//         // console.log(token, "123");
-//         const projects = await Project.find({
-//             user: req.userAuth,
-//         }).sort({ createdAt: -1 });
-
-//         const surveys = await Survey.find({
-//             user: req.userAuth,
-//         }).sort({ createdAt: -1 });
-
-//         res.json({
-//             status: "success",
-//             message: {
-//                 ...user._doc,
-//                 projects,
-//                 survey: surveys,
-//             },
-//         });
-//         res.json({
-//             status: "success",
-//             message: user,
-//         },
-//             {
-//                 new: true,
-//             }
-//         )
-//     } catch (error) {
-//         res.json({
-//             message: error.message
-//         })
-//     }
-// }
 
 const userProfileCtrl = async (req, res) => {
+    console.log(req.userAuth, "profile");
+    
     try {
         const user = await User.findById(req.userAuth)
             .populate("stories")
