@@ -1,3 +1,4 @@
+const mongoose = require("mongoose");
 const Epic = require("../../model/EPic/Epic");
 const Project = require("../../model/Project/Project");
 const Story = require("../../model/Story/Story");
@@ -240,6 +241,43 @@ const updateStoryStatusCtrl = async (req, res) => {
   }
 };
 
+const getProjectStoryStatsCtrl = async (req, res) => {
+  try {
+    const { projectId } = req.params;
+
+    const stats = await Story.aggregate([
+      {
+        $match: {
+          projectId: new mongoose.Types.ObjectId(projectId),
+        },
+      },
+      {
+        $group: {
+          _id: "$projectId",
+
+          // ✅ total stories
+          totalStories: { $sum: 1 },
+
+          // ✅ total points
+          totalPoints: { $sum: "$points" },
+        },
+      },
+    ]);
+
+    return res.json({
+      status: "success",
+      data: stats[0] || {
+        totalStories: 0,
+        totalPoints: 0,
+      },
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: error.message,
+    });
+  }
+};
+
 module.exports = {
   createStoryCtrl,
   getAllStoryCtrl,
@@ -247,4 +285,5 @@ module.exports = {
   getStoriesByEpicCtrl,
   getStoriesByProjectCtrl,
   updateStoryStatusCtrl,
+  getProjectStoryStatsCtrl,
 }       
